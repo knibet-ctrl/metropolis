@@ -110,6 +110,12 @@ body.editing .edit-banner { display:block; }
 .m1-subpanel.active { display:block; }
 .ref-list { border:1px solid var(--navy-light); border-radius:4px; padding:9px 11px; background:var(--navy-mid); margin-bottom:10px; }
 .ref-item { font-size:11px; line-height:19px; color:var(--cream-dim); }
+.chk-row { display:flex; align-items:flex-start; gap:9px; margin:9px 0; cursor:pointer; }
+.chk-box { width:16px; height:16px; margin-top:1px; border:1.5px solid var(--gold-dim); border-radius:3px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--navy); font-weight:bold; }
+.chk-box.done { background:var(--gold); border-color:var(--gold); }
+.chk-col { flex:1; }
+.chk-label { font-size:12px; color:var(--cream); line-height:16px; }
+.chk-desc { font-size:10px; color:var(--cream-dim); font-style:italic; line-height:14px; margin-top:2px; }
 .sub-head { font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--gold-dim); margin:11px 0 3px; }
 
 /* ASSET STACK */
@@ -499,11 +505,11 @@ const BRIEF = {
       [`Tax architecture`, `Structuring entities/transactions to legally reduce leakage`],
       [`Capital allocation`, `Monthly decision — which ministry gets the next rupee`]
     ],
-    build: `formalize what you already run into an entity structure → separate personal and business capital → layer in tax/cross-border structuring as entities multiply.`,
-    track: `net worth by asset class, allocation vs. target, where the monthly surplus went.`,
+    build: `lock in a founders' agreement first — equity, roles, and pre-incorporation IP assigned to the future company → separate personal and business capital, even informally → register the entity once real traction exists, not before → layer in tax/cross-border structuring as entities multiply.`,
+    track: `is a founders' agreement signed? is personal/business capital tracked separately? net worth by asset class, allocation vs. target.`,
     echo: `Napoleon founded the Bank of France in 1800 for the same reason — to stop treasury chaos from destroying everything built on top of it.`,
     forYou: `You already run a structured, bucketed portfolio with disciplined SIPs — most of personal finance is handled. What this ministry adds is the entity layer on top: a holding company that owns stakes in your ventures and properties, so personal and business risk stop sitting in the same basket.`,
-    note: null
+    note: `Deferring formal registration until there's traction is sound — it mirrors Enterprise's own "validate first" build order. What shouldn't wait is the founders' agreement itself: it's legally valid without a company existing, and it's what protects whatever gets built in the meantime.`
   },
   5: {
     mandate: `Information advantage — seeing opportunity and threat before it's obvious.`,
@@ -584,11 +590,11 @@ const BRIEF = {
       [`Institutional memory`, `Documentation so knowledge doesn't die with you`],
       [`Public brand & philanthropy`, `What the empire is known for, beyond wealth`]
     ],
-    build: `a basic will first (most people skip this entirely) → correct beneficiary nominations everywhere → document key decisions as you go → trust structures once entities multiply.`,
-    track: `is a will in place? One memory-doc written per quarter.`,
+    build: `a basic will first → correct beneficiary nominations everywhere → partnership terms with anyone co-building this, documented early, before stakes rise → document key decisions as you go → trust structures once entities multiply.`,
+    track: `is a will in place? are partnership terms documented? one memory-doc written per quarter.`,
     echo: `Tata Sons is a real example of this designed in from the start — most of its equity sits with philanthropic trusts, not individuals.`,
-    forYou: `With a young child, this ministry stops being theoretical — wealth transfer and family governance are eventually about them, specifically.`,
-    note: null
+    forYou: `Family governance stops being a someday item the moment a second real stakeholder is involved — it's needed now, not eventually. Who eventually carries this forward is the deeper question still sitting underneath that.`,
+    note: `Succession here isn't only about children — it includes anyone who joins as a real collaborator on the assets.`
   }
 };
 
@@ -775,6 +781,195 @@ function showM1(name, btn) {
   btn.classList.add('active');
 }
 
+// ─── MINISTRY X — LEGACY (special: checklist + priority ladder + logs)
+const LEGACY_CHECKS = [
+  {key:'m10-will',         id:'chk-will',         label:'Will in place',
+    desc:`Your own estate — independent of who else is involved.`},
+  {key:'m10-nominations',  id:'chk-nominations',  label:'Beneficiary nominations correct, everywhere',
+    desc:`Every account and policy, not just the obvious ones.`},
+  {key:'m10-partnership',  id:'chk-partnership',  label:'Partnership terms with brother documented',
+    desc:`Equity split, decision rights, exit terms — in writing now, before success makes it harder to agree on.`},
+  {key:'m10-famgov',       id:'chk-famgov',       label:'Family governance charter drafted',
+    desc:`How the two of you actually decide things together — no longer deferred now that there's a real second stakeholder.`}
+];
+const checks = {};
+
+function renderM10Detail(m, b) {
+  const subsHtml = b.subs.map(s=>`<tr><td>${s[0]}</td><td>${s[1]}</td></tr>`).join('');
+  const foryouHtml = b.forYou ? `<div class="brief-foryou"><b>For you</b>${b.forYou}</div>` : '';
+  const checksHtml = LEGACY_CHECKS.map(c => `
+    <div class="chk-row" onclick="toggleCheck('${c.key}', '${c.id}', event)">
+      <div class="chk-box" id="${c.id}"></div>
+      <div class="chk-col">
+        <div class="chk-label">${c.label}</div>
+        <div class="chk-desc">${c.desc}</div>
+      </div>
+    </div>`).join('');
+
+  return `
+    <div class="brief">
+      <div class="brief-head" style="color:${m.col}">Ministry Field Guide</div>
+      <div class="brief-mandate">${b.mandate}</div>
+      <table class="brief-table">${subsHtml}</table>
+      <div class="brief-line"><b>Build</b>${b.build}</div>
+      <div class="brief-line"><b>Track</b>${b.track}</div>
+      <div class="brief-line"><b>Echo</b>${b.echo}</div>
+      ${foryouHtml}
+    </div>
+
+    <div class="my-tableau">
+      <div class="mt-head">My Imperial Tableau</div>
+      <div class="mt-row">
+        <div class="mt-key">Health</div>
+        <div class="mt-val">
+          <div class="stars" id="str10">
+            ${[1,2,3,4,5].map(s=>`<span class="star" onclick="setStar(10,${s},event)">★</span>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-head">Status</div>
+      ${checksHtml}
+
+      <div class="sub-head">Priority Ladder</div>
+      <div class="ref-list">
+        <div class="ref-item">
+          <b style="color:var(--gold-dim)">Urgent now</b> — Will, nominations, partnership terms with your brother.
+          <div class="chk-desc" style="margin-top:3px;">Two people combining assets without written terms is the single highest-risk pattern in family business — not caution, just the actual failure data.</div>
+        </div>
+        <div class="ref-item">
+          <b style="color:var(--gold-dim)">Actionable now</b> — Institutional memory, family governance charter.
+          <div class="chk-desc" style="margin-top:3px;">Both genuinely live now that there are two decision-makers, not a hypothetical future one.</div>
+        </div>
+        <div class="ref-item">
+          <b style="color:var(--gold-dim)">In reach now</b> — Successor development, public brand.
+          <div class="chk-desc" style="margin-top:3px;">Whoever eventually leads this needs the vision, not just the assets — your son, or anyone who earns that role over time.</div>
+        </div>
+        <div class="ref-item">
+          <b style="color:var(--gold-dim)">Deferred until real scale</b> — Formal trust / dynasty structures.
+          <div class="chk-desc" style="margin-top:3px;">This genuinely waits for substantial multi-generational wealth — collaborating with your brother doesn't trigger it; inheritance across generations does.</div>
+        </div>
+      </div>
+
+      <div class="sub-head">Next Action</div>
+      <div class="mt-val"><span data-f="m10ac" class="blk" data-ph="Next concrete step..."></span></div>
+
+      <div class="sub-head">Institutional Memory Log</div>
+      <div class="chk-desc" style="margin-bottom:5px;">Each entry: what happened, why, and what you'd tell whoever reads this next — not just a date.</div>
+      <div class="mt-val"><span data-f="m10-memorylog" class="blk tall" data-ph="14 Sep — What happened — Why — What I'd tell the next reader... (quarterly, add below, don't overwrite)"></span></div>
+      <div class="brief-note">Quarterly entry → check: does this change anything in the Charter?</div>
+
+      <div class="sub-head">Successor Development Framework</div>
+      <div class="chk-desc" style="margin-bottom:6px;">Not only your son — anyone who earns the role over time, including through your brother's side. What matters is they inherit the judgment and vision, not just the assets.</div>
+      <div class="mt-val"><span data-f="m10-successor" class="blk tall" data-ph="Notes as it develops..."></span></div>
+
+      <div class="sub-head">Legacy Letter — once a year</div>
+      <div class="ref-list">
+        <div class="ref-item">What do I most want you to understand about why I built this?</div>
+        <div class="ref-item">What's the hardest lesson that took me the longest to learn?</div>
+        <div class="ref-item">What do I hope this enables for you, that it didn't for me?</div>
+        <div class="ref-item">Who helped build this, and why that mattered?</div>
+      </div>
+      <div class="mt-val"><span data-f="m10-legacyletter" class="blk tall" data-ph="Write this year's entry below last year's — don't overwrite. Watching your own thinking change year to year is part of the point."></span></div>
+      <div class="brief-note">This is what "a documented Legacy gives the next generation a real edge" (Charter Vision) actually means in practice.</div>
+    </div>
+  `;
+}
+
+async function toggleCheck(key, elId, e){
+  e.stopPropagation();
+  checks[key] = !checks[key];
+  const box = document.getElementById(elId);
+  box.classList.toggle('done', checks[key]);
+  box.textContent = checks[key] ? '✓' : '';
+  await saveField(key, checks[key] ? 'done' : '');
+}
+
+// ─── MINISTRY IV — CAPITAL (special: founders-agreement checklist +
+// allocation waterfall + leverage rule + decision log) ────────────
+const CAPITAL_CHECKS = [
+  {key:'m4-founders',  id:'chk-founders',
+    label:'Founders\' agreement signed',
+    desc:`Equity split, roles, exit terms — and pre-incorporation IP assigned to the future company. Whatever's built before incorporation legally belongs to whoever built it, unless this says otherwise.`},
+  {key:'m4-capsep',    id:'chk-capsep',
+    label:'Personal vs business capital tracked separately',
+    desc:`Doesn't need an entity to exist yet — just discipline in how it's recorded, starting now.`}
+];
+
+function renderM4Detail(m, b) {
+  const subsHtml = b.subs.map(s=>`<tr><td>${s[0]}</td><td>${s[1]}</td></tr>`).join('');
+  const foryouHtml = b.forYou ? `<div class="brief-foryou"><b>For you</b>${b.forYou}</div>` : '';
+  const checksHtml = CAPITAL_CHECKS.map(c => `
+    <div class="chk-row" onclick="toggleCheck('${c.key}', '${c.id}', event)">
+      <div class="chk-box" id="${c.id}"></div>
+      <div class="chk-col">
+        <div class="chk-label">${c.label}</div>
+        <div class="chk-desc">${c.desc}</div>
+      </div>
+    </div>`).join('');
+
+  return `
+    <div class="brief">
+      <div class="brief-head" style="color:${m.col}">Ministry Field Guide</div>
+      <div class="brief-mandate">${b.mandate}</div>
+      <table class="brief-table">${subsHtml}</table>
+      <div class="brief-line"><b>Build</b>${b.build}</div>
+      <div class="brief-line"><b>Track</b>${b.track}</div>
+      <div class="brief-line"><b>Echo</b>${b.echo}</div>
+      ${foryouHtml}
+    </div>
+
+    <div class="my-tableau">
+      <div class="mt-head">My Imperial Tableau</div>
+      <div class="mt-row">
+        <div class="mt-key">Health</div>
+        <div class="mt-val">
+          <div class="stars" id="str4">
+            ${[1,2,3,4,5].map(s=>`<span class="star" onclick="setStar(4,${s},event)">★</span>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-head">Status</div>
+      ${checksHtml}
+
+      <div class="sub-head">Allocation Waterfall — Priority Ladder</div>
+      <div class="ref-list">
+        <div class="ref-item">
+          <b style="color:var(--gold-dim)">Urgent now</b> — Founders' agreement, pre-incorporation IP assignment.
+          <div class="chk-desc" style="margin-top:3px;">The real risk isn't the missing company — it's that anything built together right now defaults to whoever built it, unless it's assigned in writing.</div>
+        </div>
+        <div class="ref-item">
+          <b style="color:var(--gold-dim)">Actionable now</b> — Separate capital tracking; apply the waterfall to monthly surplus.
+          <div class="chk-desc" style="margin-top:3px;">Neither needs an entity to exist — both are habits you can start today: fill the reserve floor first, fund Enterprise's engine second, everything else third.</div>
+        </div>
+        <div class="ref-item">
+          <b style="color:var(--gold-dim)">In reach now</b> — Entity type (Pvt Ltd vs LLP) understood, not yet decided.
+          <div class="chk-desc" style="margin-top:3px;">Worth knowing the tradeoffs now; deciding formally waits for the CA conversation.</div>
+        </div>
+        <div class="ref-item">
+          <b style="color:var(--gold-dim)">Deferred until real traction</b> — Entity registration itself.
+          <div class="chk-desc" style="margin-top:3px;">Building first, formalizing once proven, is sound — the same sequencing Enterprise already uses. Just don't let the founders' agreement wait alongside it.</div>
+        </div>
+      </div>
+
+      <div class="sub-head">Next Action</div>
+      <div class="mt-val"><span data-f="m4ac" class="blk" data-ph="Next concrete step..."></span></div>
+
+      <div class="sub-head">Leverage Rule</div>
+      <div class="ref-list">
+        <div class="ref-item"><b style="color:var(--gold-dim)">Productive</b> — funds something appreciating or income-generating, with a repayment plan tied to an asset or cash flow.</div>
+        <div class="ref-item"><b style="color:var(--gold-dim)">Destructive</b> — funds consumption, or has no repayment plan tied to anything.</div>
+      </div>
+      <div class="mt-row"><div class="mt-key">My cap</div><div class="mt-val"><span data-f="m4-leveragecap" class="blk" data-ph="A number set once, not renegotiated under pressure..."></span></div></div>
+
+      <div class="sub-head">Capital Decision Log</div>
+      <div class="chk-desc" style="margin-bottom:5px;">Not the numbers — the Assets tab already has those. This is the reasoning behind a major allocation call.</div>
+      <div class="mt-val"><span data-f="m4-decisionlog" class="blk tall" data-ph="14 Sep — What happened — Why — What I'd tell myself next time... (add below, don't overwrite)"></span></div>
+    </div>
+  `;
+}
+
 // ─── BUILD MINISTRIES ───────────────────────────────────────────
 function buildMin() {
   document.getElementById('ministry-list').innerHTML = MINS.map(m => {
@@ -783,6 +978,10 @@ function buildMin() {
 
     if (m.id === 1) {
       detailHtml = renderM1Detail(m, b);
+    } else if (m.id === 4) {
+      detailHtml = renderM4Detail(m, b);
+    } else if (m.id === 10) {
+      detailHtml = renderM10Detail(m, b);
     } else {
       const subsHtml = b.subs.map(s=>`<tr><td>${s[0]}</td><td>${s[1]}</td></tr>`).join('');
       const noteHtml = b.note ? `<div class="brief-note">Note: ${b.note}</div>` : '';
@@ -948,6 +1147,14 @@ async function loadAll(){
     if(rv){ rats[m.id]=parseInt(rv); litStars('str'+m.id,rats[m.id]); }
     const wv = await loadField('wrat'+m.id);
     if(wv){ wrats[m.id]=parseInt(wv); litStars('wstr'+m.id,wrats[m.id]); }
+  }
+  for(const c of [...LEGACY_CHECKS, ...CAPITAL_CHECKS]){
+    const v = await loadField(c.key);
+    if(v === 'done'){
+      checks[c.key]=true;
+      const box=document.getElementById(c.id);
+      if(box){ box.classList.add('done'); box.textContent='✓'; }
+    }
   }
   checkStorageHealth();
 }
