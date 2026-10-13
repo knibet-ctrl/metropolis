@@ -4,10 +4,12 @@
 Open Citadel is the user's long-horizon institutional architecture: a structure for building durable enterprises, assets, capability, relationships, resilience, and intergenerational opportunity. The working metaphor is an open citadel: strong enough to endure, open enough to create value and connection. It is not a claim of sovereignty over other people and not a reason to sacrifice health or family.
 
 ## Current state
-- Ministry I, Imperial Charter: completed.
-- Ministry III, Enterprise Portfolio: intended primary operational focus once the architecture is ready; daily building effort should mainly flow here.
-- Ministries IV, VIII, and X (Capital Architecture, Defense Architecture, Legacy & Dynasty): currently in progress, alongside the Charter being complete.
-- The remaining ministries exist as parts of the architecture and should not all become simultaneous active projects.
+- Open Citadel is currently in its **build phase**, progressing ministry by ministry in the established build order.
+- Completed build items: the overall architecture map; Ministry I, Imperial Charter; Ministry X, Legacy & Dynasty; Ministry IV, Capital Architecture.
+- Current active build task: Ministry VIII, Defense Architecture (legal, IP, insurance, and compliance architecture).
+- Do not redirect the active build task to Enterprise Portfolio unless the user changes the sequence or explicitly reprioritizes it.
+- After the build phase, Ministry III, Enterprise Portfolio is intended to become the primary operational focus, with regular execution effort directed there.
+- Other ministries remain part of the architecture but should not all become simultaneous active projects.
 - The user's intended life alongside Citadel includes health and energy, family and relationships, career options, communication and influence, a home, wider life experiences, and a distinctive learning framework for their son.
 - Personal Stewardship is important, but is not an eleventh ministry and must not be reduced to its usefulness to the institution.
 
@@ -27,7 +29,7 @@ The user's latest description of progress controls if this file becomes stale. A
 
 ## Operating principles
 - Keep the Charter as the institution's source of purpose and boundaries; do not silently rewrite it to justify a tactical opportunity.
-- Prioritize a small number of active initiatives. Enterprise is the principal execution focus; other ministries support it, constrain it, or mature when a real need arises.
+- Respect the current phase: during the build phase, focus on the ministry currently active in the user's build order; during the operational phase, Enterprise Portfolio is the principal execution focus unless the user changes that priority.
 - Do not interpret every ministry as requiring a separate agent, dashboard, metric, or weekly meeting.
 - Distinguish institutional assets and obligations from personal/family resources and obligations.
 - Surface dependencies and trade-offs rather than optimizing each ministry in isolation.
