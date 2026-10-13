@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Personal Empire</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --gold: #C9A84C;
+  --gold-dim: #8A7034;
+  --navy: #0A1628;
+  --navy-mid: #122040;
+  --navy-light: #1C3260;
+  --cream: #F0EBE0;
+  --cream-dim: #A89F90;
+  --red: #7A1A1A;
+}
+
+body {
+  background: var(--navy);
+  color: var(--cream);
+  font-family: 'Georgia', serif;
+  min-height: 100vh;
+  padding: 20px 14px 40px;
+}
+
+/* ─── HEADER ─── */
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--gold-dim);
+}
+.eyebrow {
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-family: Arial, sans-serif;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.header h1 {
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: var(--cream);
+}
+.header p {
+  font-size: 11px;
+  color: var(--cream-dim);
+  font-style: italic;
+  margin-top: 5px;
+  line-height: 18px;
+}
+
+/* ─── TABS ─── */
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 18px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex-shrink: 0;
+  padding: 7px 13px;
+  background: var(--navy-mid);
+  border: 1px solid var(--gold-dim);
+  border-radius: 3px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+  color: var(--cream-dim);
+  transition: all 0.2s;
+}
+.tab.active {
+  background: var(--gold);
+  color: var(--navy);
+  font-weight: bold;
+  border-color: var(--gold);
+}
+
+/* ─── PANELS ─── */
+.panel { display: none; }
+.panel.active { display: block; }
+
+.section-title {
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  font-family: Arial, sans-serif;
+  color: var(--gold);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--navy-light);
+}
+
+/* ─── PANEL 1: EMPIRE MAP ─── */
+.ministry-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.ministry-card {
+  border: 1px solid;
+  border-radius: 4px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ministry-card:active { transform: scale(0.98); }
+.ministry-card.selected { box-shadow: 0 0 0 2px; }
+
+.m-num {
+  font-size: 18px;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+  opacity: 0.4;
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+}
+.m-body { flex: 1; }
+.m-name {
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+.m-nap {
+  font-size: 10px;
+  font-family: Arial, sans-serif;
+  opacity: 0.55;
+  font-style: italic;
+}
+.m-arrow {
+  font-size: 18px;
+  opacity: 0.4;
+  flex-shrink: 0;
+}
+
+/* Ministry color system */
+.mc-1 { border-color: #C9A84C; background: #C9A84C10; }
+.mc-1 .m-name { color: #C9A84C; }
+.mc-1.selected { box-shadow: 0 0 0 2px #C9A84C; }
+
+.mc-2 { border-color: #27AE60; background: #27AE6010; }
+.mc-2 .m-name { color: #27AE60; }
+.mc-2.selected { box-shadow: 0 0 0 2px #27AE60; }
+
+.mc-3 { border-color: #C0392B; background: #C0392B10; }
+.mc-3 .m-name { color: #C0392B; }
+.mc-3.selected { box-shadow: 0 0 0 2px #C0392B; }
+
+.mc-4 { border-color: #2980B9; background: #2980B910; }
+.mc-4 .m-name { color: #2980B9; }
+.mc-4.selected { box-shadow: 0 0 0 2px #2980B9; }
+
+.mc-5 { border-color: #8E44AD; background: #8E44AD10; }
+.mc-5 .m-name { color: #8E44AD; }
+.mc-5.selected { box-shadow: 0 0 0 2px #8E44AD; }
+
+.mc-6 { border-color: #D35400; background: #D3540010; }
+.mc-6 .m-name { color: #D35400; }
+.mc-6.selected { box-shadow: 0 0 0 2px #D35400; }
+
+.mc-7 { border-color: #16A085; background: #16A08510; }
+.mc-7 .m-name { color: #16A085; }
+.mc-7.selected { box-shadow: 0 0 0 2px #16A085; }
+
+.mc-8 { border-color: #E67E22; background: #E67E2210; }
+.mc-8 .m-name { color: #E67E22; }
+.mc-8.selected { box-shadow: 0 0 0 2px #E67E22; }
+
+/* Detail box */
+.ministry-detail {
+  border: 1px solid var(--gold-dim);
+  border-radius: 4px;
+  padding: 14px 16px;
+  background: var(--navy-mid);
+  min-height: 180px;
+  transition: all 0.2s;
+}
+.detail-hint {
+  color: var(--cream-dim);
+  font-style: italic;
+  font-size: 12px;
+  text-align: center;
+  padding-top: 30px;
+  line-height: 20px;
+}
+.detail-label {
+  font-size: 9px;
+  font-family: Arial, sans-serif;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-top: 10px;
+  margin-bottom: 3px;
+}
+.detail-value {
+  font-size: 13px;
+  line-height: 21px;
+  color: var(--cream-dim);
+}
+.detail-highlight {
+  font-size: 13px;
+  line-height: 21px;
+  color: var(--cream);
+  font-style: italic;
+}
+
+/* ─── PANEL 2: NAPOLEON → YOU ─── */
+.trans-intro {
+  font-size: 12px;
+  color: var(--cream-dim);
+  font-style: italic;
+  line-height: 20px;
+  margin-bottom: 16px;
+  border-left: 3px solid var(--gold-dim);
+  padding-left: 12px;
+}
+
+.trans-row {
+  display: flex;
+  gap: 0;
+  margin: 6px 0;
+  border: 1px solid var(--navy-light);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.trans-nap {
+  background: var(--navy-light);
+  padding: 9px 10px;
+  font-size: 12px;
+  flex: 1;
+  color: var(--gold);
+}
+.trans-arr {
+  background: var(--navy-mid);
+  padding: 9px 8px;
+  font-size: 16px;
+  color: var(--gold-dim);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.trans-you {
+  background: var(--navy-mid);
+  padding: 9px 10px;
+  flex: 1;
+}
+.trans-you-name {
+  font-size: 12px;
+  color: var(--cream);
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+.trans-you-sub {
+  font-size: 10px;
+  color: var(--cream-dim);
+  font-family: Arial, sans-serif;
+  font-style: italic;
+}
+
+.insight-box {
+  margin-top: 18px;
+  border: 1px solid var(--gold-dim);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 4px 4px 0;
+  padding: 12px 14px;
+  background: var(--navy-mid);
+}
+.insight-label {
+  font-size: 9px;
+  font-family: Arial, sans-serif;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 7px;
+}
+.insight-body {
+  font-size: 13px;
+  color: var(--cream-dim);
+  line-height: 22px;
+}
+
+/* ─── PANEL 3: CONNECTIONS ─── */
+.conn-intro {
+  font-size: 12px;
+  color: var(--cream-dim);
+  font-style: italic;
+  line-height: 20px;
+  margin-bottom: 16px;
+}
+.conn-row {
+  margin: 9px 0;
+  border: 1px solid;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.conn-from {
+  padding: 7px 12px;
+  font-size: 10px;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.conn-body {
+  padding: 8px 12px;
+  font-size: 12px;
+  line-height: 20px;
+  color: var(--cream-dim);
+  background: var(--navy-mid);
+}
+.conn-feeds {
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+}
+
+/* ─── PANEL 4: NOTEBOOK STRUCTURE ─── */
+.nb-intro {
+  font-size: 12px;
+  color: var(--cream-dim);
+  font-style: italic;
+  line-height: 20px;
+  margin-bottom: 16px;
+  border-left: 3px solid var(--gold-dim);
+  padding-left: 12px;
+}
+
+.granite-box {
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  background: #C9A84C0A;
+}
+.granite-title {
+  font-size: 9px;
+  font-family: Arial, sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.granite-body {
+  font-size: 12px;
+  color: var(--cream-dim);
+  line-height: 20px;
+}
+.granite-items {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.granite-item {
+  padding: 4px 10px;
+  border: 1px solid var(--gold-dim);
+  border-radius: 3px;
+  font-size: 11px;
+  color: var(--gold);
+  font-family: Arial, sans-serif;
+}
+
+.nb-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 7px 0;
+  border: 1px solid;
+  border-radius: 4px;
+  padding: 10px 12px;
+}
+.nb-num {
+  font-size: 20px;
+  font-weight: bold;
+  flex-shrink: 0;
+  width: 26px;
+  opacity: 0.5;
+  font-family: Arial, sans-serif;
+}
+.nb-content { flex: 1; }
+.nb-name {
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+.nb-covers {
+  font-size: 11px;
+  font-family: Arial, sans-serif;
+  color: var(--cream-dim);
+  margin-bottom: 3px;
+}
+.nb-track {
+  font-size: 10px;
+  font-family: Arial, sans-serif;
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.cadence-title {
+  font-size: 9px;
+  font-family: Arial, sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 20px 0 10px;
+}
+.cadence-row {
+  border: 1px solid var(--navy-light);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 7px 0;
+}
+.cadence-head {
+  background: var(--navy-light);
+  padding: 7px 12px;
+  font-size: 9px;
+  font-family: Arial, sans-serif;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.cadence-body {
+  padding: 9px 12px;
+  font-size: 12px;
+  color: var(--cream-dim);
+  line-height: 20px;
+  background: var(--navy-mid);
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="eyebrow">Inspired by Napoleon Bonaparte's Governance System</div>
+  <h1>The Personal Empire</h1>
+  <p>Not personal productivity — institutional development across 8 interconnected domains</p>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="showPanel('map', this)">Empire Map</button>
+  <button class="tab" onclick="showPanel('napoleon', this)">Napoleon → You</button>
+  <button class="tab" onclick="showPanel('connections', this)">Connections</button>
+  <button class="tab" onclick="showPanel('notebook', this)">Notebook Structure</button>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PANEL 1 — EMPIRE MAP
+═══════════════════════════════════════════════ -->
+<div class="panel active" id="panel-map">
+  <div class="section-title">The 8 Ministries of Your Empire — Tap to Govern</div>
+  <div class="ministry-grid">
+
+    <div class="ministry-card mc-1" onclick="showMinistry(1, this)">
+      <div class="m-num" style="color:#C9A84C;">I</div>
+      <div class="m-body">
+        <div class="m-name">Culture &amp; Identity</div>
+        <div class="m-nap">Napoleon's: Ministry of Religion &amp; State Ideology</div>
+      </div>
+      <div class="m-arrow">›</div>
+    </div>
+
+    <div class="ministry-card mc-2" onclick="showMinistry(2, this)">
+      <div class="m-num" style="color:#27AE60;">II</div>
+      <div class="m-body">
+        <div class="m-name">Infrastructure &amp; Systems</div>
+        <div class="m-nap">Napoleon's: Interior Ministry + Public Works (Roads &amp; Bridges)</div>
+      </div>
+      <div class="m-arrow">›</div>
+    </div>
+
+    <div class="ministry-card mc-3" onclick="showMinistry(3, this)">
+      <div class="m-num" style="color:#C0392B;">III</div>
+      <div class="m-body">
+        <div class="m-name">Career Defense</div>
+        <div class="m-nap">Napoleon's: Ministry of War</div>
+      </div>
+      <div class="m-arrow">›</div>
+    </div>
+
+    <div class="ministry-card mc-4" onclick="showMinistry(4, this)">
+      <div class="m-num" style="color:#2980B9;">IV</div>
+      <div class="m-body">
+        <div class="m-name">Commerce &amp; Enterprise</div>
+        <div class="m-nap">Napoleon's: Navy + Ministry of Manufacturing</div>
+      </div>
+      <div class="m-arrow">›</div>
+    </div>
+
+    <div class="ministry-card mc-5" onclick="showMinistry(5, this)">
+      <div class="m-num" style="color:#8E44AD;">V</div>
+      <div class="m-body">
+        <div class="m-name">Intelligence &amp; Learning</div>
+        <div class="m-nap">Napoleon's: Education Ministry + Lycées System</div>
+      </div>
+      <div class="m-arrow">›</div>
+    </div>
+
+    <div class="ministry-card mc-6" onclick="showMinistry(6, this)">
+      <div class="m-num" style="color:#D35400;">VI</div>
+      <div class="m-body">
+        <div class="m-name">Treasury &amp; Finance</div>
+        <div class="m-nap">Napoleon's: Finance Ministry + Treasury + Bank of France</div>
+      </div>
+      <div class="m-arrow">›</div>
+    </div>
+
+    <div class="ministry-card mc-7" onclick="showMinistry(7, this)">
+      <div class="m-num" style="color:#16A085;">VII</div>
+      <div class="m-body">
+        <div class="m-name">Alliances &amp; Relations</div>
+        <div class="m-nap">Napoleon's: Ministry of Foreign Affairs</div>
+      </div>
+      <div class="m-arrow">›</div>
+    </div>
+
+    <div class="ministry-card mc-8" onclick="showMinistry(8, this)">
+      <div class="m-num" style="color:#E67E22;">VIII</div>
+      <div class="m-body">
+        <div class="m-name">Base Operations</div>
+        <div class="m-nap">Napoleon's: Prefectoral System (Local Governance)</div>
+      </div>
+      <div class="m-arrow">›</div>
+    </div>
+
+  </div>
+
+  <div class="ministry-detail" id="ministry-detail">
+    <div class="detail-hint">Tap any ministry above to see what it governs, what it feeds, and how to track it</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PANEL 2 — NAPOLEON → YOU
+═══════════════════════════════════════════════ -->
+<div class="panel" id="panel-napoleon">
+  <div class="section-title">How Napoleon's System Translates to Your Life</div>
+
+  <p class="trans-intro">
+    Napoleon governed France the way a CEO governs a company — with clear ministries, fixed review cadences, and metrics for every domain. His ministers submitted structured reports ("tableaux") at weekly sessions. He ran War on Mondays, Interior on Thursdays, Finance on Sundays. Nothing was left to mood or chance.
+  </p>
+
+  <div class="trans-row">
+    <div class="trans-nap">Religion &amp; Culture</div>
+    <div class="trans-arr">→</div>
+    <div class="trans-you"><div class="trans-you-name">Culture &amp; Identity</div><div class="trans-you-sub">Values, Ikigai, principles, mental code</div></div>
+  </div>
+  <div class="trans-row">
+    <div class="trans-nap">Interior + Public Works</div>
+    <div class="trans-arr">→</div>
+    <div class="trans-you"><div class="trans-you-name">Infrastructure &amp; Systems</div><div class="trans-you-sub">Habits, health, sleep, routines, space</div></div>
+  </div>
+  <div class="trans-row">
+    <div class="trans-nap">Ministry of War</div>
+    <div class="trans-arr">→</div>
+    <div class="trans-you"><div class="trans-you-name">Career Defense</div><div class="trans-you-sub">Job security, skills, professional edge</div></div>
+  </div>
+  <div class="trans-row">
+    <div class="trans-nap">Navy + Manufacturing</div>
+    <div class="trans-arr">→</div>
+    <div class="trans-you"><div class="trans-you-name">Commerce &amp; Enterprise</div><div class="trans-you-sub">Business project, new income, expansion</div></div>
+  </div>
+  <div class="trans-row">
+    <div class="trans-nap">Education + Lycées</div>
+    <div class="trans-arr">→</div>
+    <div class="trans-you"><div class="trans-you-name">Intelligence &amp; Learning</div><div class="trans-you-sub">Books, courses, skills being built, research</div></div>
+  </div>
+  <div class="trans-row">
+    <div class="trans-nap">Finance + Treasury + Bank</div>
+    <div class="trans-arr">→</div>
+    <div class="trans-you"><div class="trans-you-name">Treasury &amp; Finance</div><div class="trans-you-sub">Three buckets, SIPs, cash flow, targets</div></div>
+  </div>
+  <div class="trans-row">
+    <div class="trans-nap">Foreign Affairs</div>
+    <div class="trans-arr">→</div>
+    <div class="trans-you"><div class="trans-you-name">Alliances &amp; Relations</div><div class="trans-you-sub">Network, mentors, family, key partnerships</div></div>
+  </div>
+  <div class="trans-row">
+    <div class="trans-nap">Prefectoral System (Local)</div>
+    <div class="trans-arr">→</div>
+    <div class="trans-you"><div class="trans-you-name">Base Operations</div><div class="trans-you-sub">Home, physical space, daily structure</div></div>
+  </div>
+
+  <div class="insight-box">
+    <div class="insight-label">The Critical Shift in Thinking</div>
+    <div class="insight-body">Napoleon didn't manage "tasks" or "habits." He managed <em>institutions</em> with domains, budgets, and metrics. You are not trying to be more productive. You are governing an empire of one — where every domain has a mandate, a resource allocation, and a review cadence. The goal is not self-improvement. It is institutional development.</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PANEL 3 — CONNECTIONS
+═══════════════════════════════════════════════ -->
+<div class="panel" id="panel-connections">
+  <div class="section-title">How Ministries Feed Each Other</div>
+
+  <p class="conn-intro">Napoleon's empire was described as a "spider's web" — Paris at the centre, each ministry a node, with flows of resources, intelligence, and power between them. Neglect one node and the web weakens everywhere. Your domains work the same way.</p>
+
+  <div class="conn-row" style="border-color:#C9A84C;">
+    <div class="conn-from" style="background:#C9A84C18; color:#C9A84C;">I · Culture &amp; Identity — The Constitution</div>
+    <div class="conn-body">Feeds <span class="conn-feeds" style="color:#C9A84C;">ALL 7 other ministries.</span> Your Ikigai and principles are the mandate every other ministry operates under. Without this, ministries make decisions without a governing law. Napoleon's state ideology gave every prefect a shared direction. Yours must do the same.</div>
+  </div>
+
+  <div class="conn-row" style="border-color:#27AE60;">
+    <div class="conn-from" style="background:#27AE6018; color:#27AE60;">II · Infrastructure &amp; Systems — The Roads</div>
+    <div class="conn-body">Feeds <span class="conn-feeds" style="color:#27AE60;">ALL 7 other ministries.</span> Napoleon's roads and bridges were what made military campaigns, tax collection, and trade possible. Your health, habits, and routines are what make every other ministry operable. A broken infrastructure means all other domains run at reduced capacity.</div>
+  </div>
+
+  <div class="conn-row" style="border-color:#C0392B;">
+    <div class="conn-from" style="background:#C0392B18; color:#C0392B;">III · Career Defense — The Standing Army</div>
+    <div class="conn-body">Feeds <span class="conn-feeds" style="color:#C0392B;">Treasury</span> (current income), <span class="conn-feeds" style="color:#C0392B;">Intelligence</span> (what skills matter), <span class="conn-feeds" style="color:#C0392B;">Alliances</span> (professional network). Napoleon maintained his armies even in peacetime. You must maintain your career even when not under threat. A neglected army is defeated before the battle begins.</div>
+  </div>
+
+  <div class="conn-row" style="border-color:#2980B9;">
+    <div class="conn-from" style="background:#2980B918; color:#2980B9;">IV · Commerce &amp; Enterprise — The Navy</div>
+    <div class="conn-body">Feeds <span class="conn-feeds" style="color:#2980B9;">Treasury</span> (future independence), <span class="conn-feeds" style="color:#2980B9;">Intelligence</span> (forces real learning), <span class="conn-feeds" style="color:#2980B9;">Alliances</span> (new partnerships). Napoleon's Navy opened new territories and trade routes. Your business project opens new income lines — it is how your empire expands beyond its current borders.</div>
+  </div>
+
+  <div class="conn-row" style="border-color:#8E44AD;">
+    <div class="conn-from" style="background:#8E44AD18; color:#8E44AD;">V · Intelligence &amp; Learning — The Lycées</div>
+    <div class="conn-body">Feeds <span class="conn-feeds" style="color:#8E44AD;">Career Defense</span> (skill edge), <span class="conn-feeds" style="color:#8E44AD;">Commerce</span> (business insight), <span class="conn-feeds" style="color:#8E44AD;">Culture</span> (expands your worldview). Napoleon's Lycées produced every minister, general, and administrator. Your learning builds the talent that runs your empire's other ministries.</div>
+  </div>
+
+  <div class="conn-row" style="border-color:#D35400;">
+    <div class="conn-from" style="background:#D3540018; color:#D35400;">VI · Treasury &amp; Finance — The Bank of France</div>
+    <div class="conn-body">Feeds <span class="conn-feeds" style="color:#D35400;">Base Operations</span> (stable home), <span class="conn-feeds" style="color:#D35400;">Commerce</span> (capital to launch), <span class="conn-feeds" style="color:#D35400;">Infrastructure</span> (resources for health). Napoleon created the Bank of France in 1800 to end financial chaos. Your safety bucket does the same — when Treasury is stable, background anxiety drops and every other ministry operates more clearly.</div>
+  </div>
+
+  <div class="conn-row" style="border-color:#16A085;">
+    <div class="conn-from" style="background:#16A08518; color:#16A085;">VII · Alliances &amp; Relations — Foreign Affairs</div>
+    <div class="conn-body">Feeds <span class="conn-feeds" style="color:#16A085;">Commerce</span> (customers, partners), <span class="conn-feeds" style="color:#16A085;">Intelligence</span> (mentors, access), <span class="conn-feeds" style="color:#16A085;">Career Defense</span> (referrals, opportunities). Napoleon famously said he who fights alone loses. Every major expansion in your empire will come through people. Neglect this ministry and the other six operate in isolation.</div>
+  </div>
+
+  <div class="conn-row" style="border-color:#E67E22;">
+    <div class="conn-from" style="background:#E67E2218; color:#E67E22;">VIII · Base Operations — The Prefects</div>
+    <div class="conn-body">Feeds <span class="conn-feeds" style="color:#E67E22;">Infrastructure</span> (a stable base enables good habits), <span class="conn-feeds" style="color:#E67E22;">Culture</span> (your environment shapes your thinking). Napoleon's prefects were called "little emperors" — they maintained local order so Paris could think at the level of empire. Your daily structure and home environment must do the same for your mind.</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PANEL 4 — NOTEBOOK STRUCTURE
+═══════════════════════════════════════════════ -->
+<div class="panel" id="panel-notebook">
+  <div class="section-title">The Imperial Notebook — Governance Structure</div>
+
+  <p class="nb-intro">
+    Napoleon's ministers submitted structured "tableaux" — status tables for each domain — at fixed weekly sessions. Each ministry page in your notebook is your personal tableau. Updated on its own cadence. Reviewed at Council Sessions.
+  </p>
+
+  <!-- Granite blocks -->
+  <div class="granite-box">
+    <div class="granite-title">Masses de Granit — The Unshakeable Foundations</div>
+    <div class="granite-body">Napoleon called his core institutions "masses of granite" — the bedrock everything else rested on. Three of your ministries function the same way. Without them, the others crumble.</div>
+    <div class="granite-items">
+      <div class="granite-item">I · Culture &amp; Identity</div>
+      <div class="granite-item">II · Infrastructure &amp; Systems</div>
+      <div class="granite-item">VI · Treasury &amp; Finance</div>
+    </div>
+  </div>
+
+  <!-- Cover -->
+  <div style="border:1px solid var(--gold); border-radius:4px; padding:10px 14px; margin:7px 0; background:#C9A84C08;">
+    <div style="font-size:9px; font-family:Arial; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">Cover Page</div>
+    <div style="font-size:13px; font-weight:bold; color:var(--cream); margin-bottom:2px;">Empire Overview Map</div>
+    <div style="font-size:11px; color:var(--cream-dim); font-family:Arial;">Draw the 8 ministries + connection lines. This is your Constitution. Revisit quarterly.</div>
+  </div>
+
+  <!-- 8 sections -->
+  <div class="nb-row" style="border-color:#C9A84C;">
+    <div class="nb-num" style="color:#C9A84C;">I</div>
+    <div class="nb-content">
+      <div class="nb-name" style="color:#C9A84C;">Culture &amp; Identity</div>
+      <div class="nb-covers">Ikigai · Principles · Circle of Control · Who I'm becoming</div>
+      <div class="nb-track">Track: Clarity score (1–10) · Quarterly update</div>
+    </div>
+  </div>
+
+  <div class="nb-row" style="border-color:#27AE60;">
+    <div class="nb-num" style="color:#27AE60;">II</div>
+    <div class="nb-content">
+      <div class="nb-name" style="color:#27AE60;">Infrastructure &amp; Systems</div>
+      <div class="nb-covers">Health · Habits · Sleep · Exercise · Space · Morning routine</div>
+      <div class="nb-track">Track: Habit grid · Energy level weekly (1–10)</div>
+    </div>
+  </div>
+
+  <div class="nb-row" style="border-color:#C0392B;">
+    <div class="nb-num" style="color:#C0392B;">III</div>
+    <div class="nb-content">
+      <div class="nb-name" style="color:#C0392B;">Career Defense</div>
+      <div class="nb-covers">Job security · Skill gaps · Positioning · Reputation · Performance</div>
+      <div class="nb-track">Track: Threat level · Skills in development · Opportunities seen</div>
+    </div>
+  </div>
+
+  <div class="nb-row" style="border-color:#2980B9;">
+    <div class="nb-num" style="color:#2980B9;">IV</div>
+    <div class="nb-content">
+      <div class="nb-name" style="color:#2980B9;">Commerce &amp; Enterprise</div>
+      <div class="nb-covers">B-plan · MVP milestones · Revenue experiments · New income lines</div>
+      <div class="nb-track">Track: Milestone progress · Weekly MIT · Revenue target</div>
+    </div>
+  </div>
+
+  <div class="nb-row" style="border-color:#8E44AD;">
+    <div class="nb-num" style="color:#8E44AD;">V</div>
+    <div class="nb-content">
+      <div class="nb-name" style="color:#8E44AD;">Intelligence &amp; Learning</div>
+      <div class="nb-covers">Books · Courses · Research · Applied insights · Skills in progress</div>
+      <div class="nb-track">Track: Books read · Key concepts applied · Monthly insight count</div>
+    </div>
+  </div>
+
+  <div class="nb-row" style="border-color:#D35400;">
+    <div class="nb-num" style="color:#D35400;">VI</div>
+    <div class="nb-content">
+      <div class="nb-name" style="color:#D35400;">Treasury &amp; Finance</div>
+      <div class="nb-covers">Safety · Stability · Growth buckets · Cash flow · Targets</div>
+      <div class="nb-track">Track: Bucket levels · Monthly surplus · Financial anxiety (1–10)</div>
+    </div>
+  </div>
+
+  <div class="nb-row" style="border-color:#16A085;">
+    <div class="nb-num" style="color:#16A085;">VII</div>
+    <div class="nb-content">
+      <div class="nb-name" style="color:#16A085;">Alliances &amp; Relations</div>
+      <div class="nb-covers">Key relationships · Network map · Mentors · Family · Inner circle</div>
+      <div class="nb-track">Track: Relationship quality · Connections made · Debts and credits</div>
+    </div>
+  </div>
+
+  <div class="nb-row" style="border-color:#E67E22;">
+    <div class="nb-num" style="color:#E67E22;">VIII</div>
+    <div class="nb-content">
+      <div class="nb-name" style="color:#E67E22;">Base Operations</div>
+      <div class="nb-covers">Home environment · Physical space · Morning structure · Daily rhythm</div>
+      <div class="nb-track">Track: Morning success rate · Space quality · Environmental changes</div>
+    </div>
+  </div>
+
+  <!-- Council cadence -->
+  <div class="cadence-title">Council Session Cadence</div>
+
+  <div class="cadence-row">
+    <div class="cadence-head">Daily — 5-Minute Morning Session</div>
+    <div class="cadence-body">DUMP · QUESTION · INSIGHT · INTENTION<br>Which ministry needs a directive today?</div>
+  </div>
+
+  <div class="cadence-row">
+    <div class="cadence-head">Weekly — Council of State (Sunday · 20 min)</div>
+    <div class="cadence-body">Rate each ministry 1–5. One sentence on status. Set the week's campaign objective. Identify which ministry is most at risk this week.</div>
+  </div>
+
+  <div class="cadence-row">
+    <div class="cadence-head">Monthly — Imperial Review (Last Sunday · 45 min)</div>
+    <div class="cadence-body">Full tableau review: all 8 ministries. Update the empire map. Set next month's priority ministry. Where are the cross-ministry gaps?</div>
+  </div>
+
+  <div class="cadence-row">
+    <div class="cadence-head">Quarterly — Constitutional Review (3 months)</div>
+    <div class="cadence-body">Return to Ministry I — Culture &amp; Identity. Has your Ikigai shifted? Do your principles still hold? Rewrite the Constitution if needed. Everything else follows from here.</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════ -->
+<script>
+const ministryData = {
+  1: {
+    color: '#C9A84C',
+    name: 'Culture & Identity',
+    napoleon: "Napoleon's Ministry of Religion & State Ideology",
+    governs: 'Your Ikigai, core values, principles, mental frameworks, your code of conduct, who you are becoming — the mandate all other ministries operate under.',
+    feeds: 'ALL 7 other ministries. This is your Constitution. Every decision in every domain runs against it.',
+    metric: 'Clarity score (1–10) monthly. Are my principles clear? Is my Ikigai still accurate? Am I deciding in alignment with my identity?',
+    action: 'Write and refine your Ikigai map, your principles, your Circle of Control. Revisit quarterly. This is the first page of Section I.'
+  },
+  2: {
+    color: '#27AE60',
+    name: 'Infrastructure & Systems',
+    napoleon: "Napoleon's Interior Ministry + Public Works (Roads & Bridges)",
+    governs: 'Physical health, sleep quality, exercise routine, daily habits, home environment, tools and systems, energy management.',
+    feeds: 'ALL 7 other ministries. Napoleon\'s roads made his armies fast. Your habits make your empire possible. Without this ministry, all others run at reduced capacity.',
+    metric: 'Habit grid completion rate. Weekly energy level (1–10). Infrastructure health score.',
+    action: 'Protect the morning. Build one new infrastructure habit per month. Audit your space quarterly.'
+  },
+  3: {
+    color: '#C0392B',
+    name: 'Career Defense',
+    napoleon: "Napoleon's Ministry of War",
+    governs: 'Job security, professional skills, competitive positioning, reputation, performance signals, skill gaps.',
+    feeds: 'Treasury (current income), Intelligence (what to learn next), Alliances (professional network and referrals).',
+    metric: 'Skill gap audit quarterly. Threat level (how secure is the current position?). Performance signal review.',
+    action: 'Identify one skill gap per month. Build the defense before the threat appears. Maintain your army even in peacetime.'
+  },
+  4: {
+    color: '#2980B9',
+    name: 'Commerce & Enterprise',
+    napoleon: "Napoleon's Navy + Ministry of Manufacturing",
+    governs: 'Business project, new income lines, entrepreneurship, market expansion, revenue experiments, independence from employment.',
+    feeds: 'Treasury (future income independence), Intelligence (real-world learning), Alliances (new partnerships and customers).',
+    metric: 'Milestone progress. Weekly MIT on project. Distance to first revenue. Independence timeline.',
+    action: 'One dedicated morning session per day. Define the next milestone. The Navy expands your reach beyond current territory.'
+  },
+  5: {
+    color: '#8E44AD',
+    name: 'Intelligence & Learning',
+    napoleon: "Napoleon's Education Ministry + Lycée System",
+    governs: 'Books, courses, research, deliberate skill-building, applied knowledge, insights collected and deployed.',
+    feeds: 'Career Defense (skill edge), Commerce (business insight), Culture (expands your worldview and principles).',
+    metric: 'Books read per month. Key insights applied (not just consumed). New skills activated.',
+    action: '30 minutes of deliberate learning daily. In your peak energy window. Apply one insight per week across a ministry.'
+  },
+  6: {
+    color: '#D35400',
+    name: 'Treasury & Finance',
+    napoleon: "Napoleon's Finance Ministry + Treasury + Bank of France (created 1800)",
+    governs: 'Three buckets (Safety, Stability, Growth), investments, SIPs, cash flow, monthly surplus, financial targets.',
+    feeds: 'Base Operations (stable home), Commerce (capital to deploy), Infrastructure (resources for health and systems).',
+    metric: 'Bucket levels monthly. Monthly surplus figure. Financial anxiety score (1–10). Distance to safety bucket target.',
+    action: 'Monthly financial review session. Fill the Treasury tableau page. Safety bucket is the Bank of France — build it first.'
+  },
+  7: {
+    color: '#16A085',
+    name: 'Alliances & Relations',
+    napoleon: "Napoleon's Ministry of Foreign Affairs",
+    governs: 'Key relationships, professional network, family bonds, mentors, inner circle quality, relationship investment.',
+    feeds: 'Commerce (customers and partners), Intelligence (mentors give access), Career Defense (referrals and opportunities).',
+    metric: 'Inner circle map (quarterly). Meaningful outreach per month. Relationship quality score. Debts and credits tracked.',
+    action: 'One meaningful outreach per week. Map your full alliance network quarterly. Identify missing alliance types.'
+  },
+  8: {
+    color: '#E67E22',
+    name: 'Base Operations',
+    napoleon: "Napoleon's Prefectoral System — 'Little Emperors' in each department, reporting up to Paris",
+    governs: 'Home environment, physical space, daily structure, morning success rate, local order, the ground-level rhythm of your days.',
+    feeds: 'Infrastructure (stable base enables habits to form), Culture (your environment shapes your thinking and identity).',
+    metric: 'Morning success rate (%). Space quality score. Number of environmental improvements made monthly.',
+    action: 'Declutter one space per month. Protect the morning — notebook before phone, every day. Local order is what gives Paris the space to think about empire.'
+  }
+};
+
+function showMinistry(num, el) {
+  document.querySelectorAll('.ministry-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+
+  const m = ministryData[num];
+  const rn = ['I','II','III','IV','V','VI','VII','VIII'][num-1];
+
+  document.getElementById('ministry-detail').innerHTML = `
+    <div style="font-size:9px; font-family:Arial; letter-spacing:1.5px; text-transform:uppercase; color:${m.color}; margin-bottom:4px;">Ministry ${rn}</div>
+    <div style="font-size:16px; font-weight:bold; color:${m.color}; margin-bottom:2px;">${m.name}</div>
+    <div style="font-size:10px; font-family:Arial; color:var(--cream-dim); font-style:italic; margin-bottom:12px;">${m.napoleon}</div>
+
+    <div class="detail-label" style="color:${m.color};">Governs</div>
+    <div class="detail-highlight">${m.governs}</div>
+
+    <div class="detail-label" style="color:${m.color};">Feeds into</div>
+    <div class="detail-value">${m.feeds}</div>
+
+    <div class="detail-label" style="color:${m.color};">Monthly Tableau (what to track)</div>
+    <div class="detail-value">${m.metric}</div>
+
+    <div class="detail-label" style="color:${m.color};">Imperial Directive</div>
+    <div class="detail-highlight" style="font-size:12px; color:${m.color}; border-left:2px solid ${m.color}; padding-left:8px;">${m.action}</div>
+  `;
+}
+
+function showPanel(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+
+</body>
+</html>

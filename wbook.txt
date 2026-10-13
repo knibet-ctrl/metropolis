@@ -1,0 +1,200 @@
+# WBOOK — Working Notebook
+# Topic: Notable Leaders — Strategies, Differentiators, and Outlier Behaviour
+# Started: 2026-08-31
+
+===============================================================================
+PURPOSE
+===============================================================================
+Answer one question rigorously:
+
+  "What did outlier leaders actually DO differently from an ordinary,
+   equally-talented person living in the same era, with the same tools,
+   under the same constraints?"
+
+Not hagiography. Not 'they worked hard'. Everyone worked hard.
+We are hunting for the *mechanisms* — the repeatable, describable moves.
+
+===============================================================================
+FILE MAP
+===============================================================================
+wbook.txt                          <- you are here. Index + running log.
+../SYNTHESIS.md                    <- CROSS-NOTEBOOK ANALYSIS. Where this
+                                      notebook meets existence/. 12 convergences,
+                                      4 conflicts, 12 mix-and-match combinations,
+                                      and a 9-item integrated program.
+../existence/                      <- The companion notebook: mind, life, death,
+                                      self, society, meaning. 18 files.
+leaders/historical-leaders.md      <- pre-1900 figures, case by case.
+leaders/modern-leaders.md          <- 20th/21st century political + social.
+leaders/business-and-builders.md   <- founders, operators, scientists.
+leaders/patterns-and-strategies.md <- THE CORE FILE. Cross-cutting mechanisms.
+leaders/playbook.md                <- Actionable extraction. Do-this-not-that.
+leaders/failure-modes.md           <- How the same traits destroyed people.
+                                      Now includes the 8-stage decline sequence.
+leaders/mechanism-matrix.md        <- Figure x mechanism matrix across all 35.
+                                      Answers: which mechanisms recur, and age
+                                      at first leverage (median ~36).
+leaders/derived-uses.md            <- What can be BUILT from this data.
+                                      Tools, products, research, and limits.
+leaders/sources-and-caveats.md     <- Epistemics: survivorship bias, flagged
+                                      claims to fact-check, the failure sample
+                                      (control group), reading list, TODO.
+leaders/profiles/                  <- 35 DEEP PROFILES, one file per leader.
+  README.md                           Index + the 10 pairings that matter most.
+                                      Same template each: what they inherited,
+                                      stories, comparison to NAMED contemporaries,
+                                      mechanisms, the price, where the popular
+                                      story is wrong.
+
+Read order if you only have 20 minutes:
+  patterns-and-strategies.md -> playbook.md -> failure-modes.md
+
+Read order if you have an afternoon:
+  profiles/README.md -> the 10 pairings -> the failure sample profiles
+
+===============================================================================
+HEADLINE FINDINGS (compressed)
+===============================================================================
+After going through ~60 figures across 2,500 years, the differentiators
+cluster into 12 mechanisms. None of them are "charisma".
+
+ 1. ASYMMETRIC INFORMATION POSITION
+    They systematically knew something true that the consensus did not.
+    Usually earned by going somewhere others wouldn't go (the front line,
+    the factory floor, the prison, the lab bench, the customer's house).
+
+ 2. TIME-HORIZON ARBITRAGE
+    They played a 20-year game in a room full of people playing 1-year games.
+    This is the single most repeated pattern in the whole dataset.
+
+ 3. COMPOUNDING A NARROW EDGE
+    One unfair advantage, pressed relentlessly, rather than five modest ones.
+
+ 4. DECISION VELOCITY UNDER UNCERTAINTY
+    They decided at ~60-70% information while peers waited for 95%.
+    They paired this with cheap reversibility and fast error correction.
+
+ 5. NARRATIVE CONTROL
+    They defined the frame, the vocabulary, and the enemy. Whoever names
+    the situation usually wins the argument about it.
+
+ 6. SELECTION OVER MANAGEMENT
+    Obsessive about *who*. They spent outrageous time on picking people and
+    comparatively little on supervising them.
+
+ 7. INSTITUTION-BUILDING (the "machine that outlives me" move)
+    Ordinary high-performers optimise output. Outliers build the mechanism
+    that produces output without them.
+
+ 8. STRATEGIC PATIENCE + SUDDEN CONCENTRATION
+    Long quiet accumulation, then all-in at the decisive moment.
+    Not constant aggression — punctuated aggression.
+
+ 9. COSTLY SIGNALS OF COMMITMENT
+    They did something irreversible and expensive that proved they meant it,
+    which changed everyone else's calculations.
+
+10. PROXIMITY TO THE REAL CONSTRAINT
+    They found the actual bottleneck (logistics, legitimacy, cashflow,
+    a single physical parameter) and attacked it instead of the symptom.
+
+11. ASYMMETRIC MORAL LEVERAGE
+    The non-violent tradition especially: absorb harm publicly, force the
+    opponent to reveal their nature, convert bystanders into participants.
+
+12. RECRUITING THE FUTURE
+    Deliberately built successors and disciples. Influence outlived the body.
+
+===============================================================================
+THE UNCOMFORTABLE PART (do not skip)
+===============================================================================
+- SURVIVORSHIP BIAS is enormous here. For every outlier who bet big and won,
+  a graveyard of identical people bet big and vanished. We only interview
+  the winners. Treat every "strategy" below as *necessary but not sufficient*.
+- LUCK / TIMING is doing heavy lifting. Being 26 when the printing press,
+  the railway, the microprocessor, or the internet arrives is not a skill.
+  The transferable part is: they were POSITIONED to exploit the shock.
+- MANY OF THESE PEOPLE WERE MONSTROUS. Effectiveness is not virtue.
+  Napoleon, Caesar, Mao, and Genghis Khan are studied here as case data,
+  not as role models. See failure-modes.md.
+- Biographies are written by winners and their friends. Discount accordingly.
+
+===============================================================================
+RUNNING LOG
+===============================================================================
+[2026-08-31] Created file structure. Compiled figure list across 5 domains:
+             ancient/classical, early-modern, modern political, non-violent
+             movements, science/business builders.
+[2026-08-31] Extracted 12 cross-cutting mechanisms -> patterns-and-strategies.md
+[2026-08-31] Wrote playbook.md with the version of each mechanism that a
+             normal person with no army and no fortune can actually run.
+[2026-08-31] Added failure-modes.md — every mechanism has a pathological twin.
+[2026-08-31] Added sources-and-caveats.md. Flagged survivorship bias hard.
+[2026-08-31] Audited the notebook's own quotes/numbers/dates and added a
+             failure sample (FitzRoy, Semmelweis, Tesla, Theranos, Great Leap)
+             as the missing control group. Both folded into
+             sources-and-caveats.md rather than kept as separate files.
+             Key result: mechanism #1 is the only non-negotiable one; #3 shows
+             up equally in winners and losers, so it's variance, not skill.
+             Known error to fix: the Ford $5-day rationale is a myth.
+[2026-08-31] Added derived-uses.md — treated the notebook as a dataset and
+             mapped what it can support. Top three: a decision log (#4), an
+             error-correction audit, and a prediction journal. Noted what it
+             CANNOT support: any success rate, any causal claim, any
+             prediction about individuals.
+[2026-08-31] Wrote 35 deep profiles in leaders/profiles/. Same template each:
+             what they inherited, stories, comparison to NAMED contemporaries,
+             mechanisms, the price, where the popular story is wrong.
+             Findings that only emerge at this depth:
+               - Churchill and FitzRoy ran the identical play. One was
+                 vindicated in his lifetime and one wasn't. That's luck.
+               - Mao vs Deng is the best natural experiment available: same
+                 country, party and ambition. The variable is sandboxing +
+                 feedback, and it's measured in tens of millions of lives.
+               - Semmelweis (truth, no narrative) and Holmes (narrative, no
+                 truth) fail in mirror-image ways. Both are required.
+               - Jobs had error correction at Pixar (the Braintrust) and not
+                 at Apple. He could build it; he chose not to for himself.
+             Applied 3 of the 6 priority fact-fixes: Ford's $5-day rationale
+             (efficiency wages, not customer creation), the Deng/Chen Yun
+             misattribution, and the Zelenskyy paraphrase.
+[2026-09-01] Full audit of all 59 files. Added what was genuinely missing
+             rather than padding:
+               - mechanism-matrix.md: coded all 35 profiles against the 12
+                 mechanisms. ANSWERED two open questions below.
+               - Promoted ERROR CORRECTION to mechanism #13. It was buried in
+                 failure-modes as "destroyer #2" and it discriminates between
+                 the success and failure samples better than anything else.
+               - Added mechanism INTERACTIONS to patterns-and-strategies:
+                 which gate which, which amplify, which fight each other.
+               - Added the 8-STAGE DECLINE SEQUENCE to failure-modes. Intervene
+                 at Stage 3 (deference); by Stage 6 the channel is gone.
+               - Added LEADING INDICATORS to playbook. The three worth tracking:
+                 surprises per month, who told you you were wrong, what broke
+                 while you were away.
+[2026-09-01] Wrote ../SYNTHESIS.md across both notebooks. The sharpest result
+             is a CONFLICT, not a convergence: the leaders playbook optimises
+             for impact, and the existence evidence says relationships predict
+             a life going well. Look at the 35 profiles - Curie, Mandela,
+             Tesla, Jobs, Ford, Napoleon. The playbook has a documented cost
+             that falls mostly on the people around you, and the notebook had
+             not admitted it.
+
+NEXT / OPEN QUESTIONS
+  [x] ANSWERED: age at first real leverage. Median ~36, later than assumed.
+      More striking is the GAP: Churchill 25->65, Mandela 44->71, Deng purged
+      twice then 74, Lincoln looked like a failure at 50. Being 35 without
+      leverage is the base case, not a failure.
+  [x] ANSWERED: mechanism frequency. #1 and #10 are the base pair (~19, ~18).
+      #3 concentration has the WORST success-to-failure ratio in the file -
+      it is a variance amplifier, not a success factor.
+  [ ] Resolve or formally accept the impact-vs-good-life conflict in SYNTHESIS.
+  [ ] Verify the flagged claims in sources-and-caveats.md against real sources
+      (blocked so far: no web access). Then fix the source files.
+  [ ] Add non-Western coverage depth: Ashoka, Mansa Musa, Meiji reformers,
+      Lee Kuan Yew, Deng Xiaoping (partially covered — expand).
+  [ ] Add "leaders who succeeded quietly" — the anti-charisma sample, to
+      counterweight the loud-personality bias in the dataset.
+  [ ] Quantify: for each figure, what was their age at first real leverage?
+      Hypothesis: median is later than people assume.
+  [ ] Test mechanism #2 (time-horizon arbitrage) against counterexamples.

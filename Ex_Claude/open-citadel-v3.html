@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Open Citadel</title>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+:root {
+  --gold:#C9A84C; --gold-dim:#7A6530;
+  --navy:#070E1C; --navy-mid:#0E1C34; --navy-light:#182E50;
+  --cream:#EAE4D8; --cream-dim:#908070;
+}
+body { background:var(--navy); color:var(--cream); font-family:'Georgia',serif; padding:18px 14px 90px; min-height:100vh; }
+
+/* HEADER */
+.header { text-align:center; margin-bottom:16px; padding-bottom:14px; border-bottom:1px solid var(--gold-dim); }
+.eyebrow { font-size:9px; letter-spacing:3px; text-transform:uppercase; font-family:Arial,sans-serif; color:var(--gold); margin-bottom:6px; }
+.header h1 { font-size:22px; letter-spacing:2px; }
+.header p { font-size:11px; color:var(--cream-dim); font-style:italic; margin-top:4px; line-height:18px; }
+
+/* EDIT BANNER */
+.edit-banner { display:none; background:#C9A84C18; border:1px solid var(--gold-dim); border-radius:4px; padding:7px 12px; font-size:10px; font-family:Arial; color:var(--gold); letter-spacing:1px; text-align:center; margin-bottom:12px; }
+body.editing .edit-banner { display:block; }
+
+/* TABS */
+.tabs { display:flex; gap:4px; margin-bottom:14px; overflow-x:auto; scrollbar-width:none; }
+.tabs::-webkit-scrollbar { display:none; }
+.tab { flex-shrink:0; padding:7px 12px; background:var(--navy-mid); border:1px solid var(--gold-dim); border-radius:3px; font-size:10px; letter-spacing:1px; text-transform:uppercase; font-family:Arial,sans-serif; cursor:pointer; color:var(--cream-dim); }
+.tab.active { background:var(--gold); color:var(--navy); font-weight:bold; border-color:var(--gold); }
+.panel { display:none; } .panel.active { display:block; }
+.stitle { font-size:9px; letter-spacing:2.5px; text-transform:uppercase; font-family:Arial,sans-serif; color:var(--gold); margin-bottom:12px; padding-bottom:7px; border-bottom:1px solid var(--navy-light); }
+.sub-stitle { font-size:9px; letter-spacing:2px; text-transform:uppercase; font-family:Arial; color:var(--gold); margin:14px 0 8px; }
+
+/* ARCHITECTURE */
+.arch-layer { margin:7px 0; border-radius:4px; overflow:hidden; }
+.arch-head { padding:8px 14px; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; font-family:Arial; font-weight:bold; }
+.arch-body { padding:9px 12px 11px; display:flex; gap:7px; flex-wrap:wrap; }
+.arch-item { flex:1; min-width:100px; padding:7px 10px; border-radius:3px; border:1px solid; text-align:center; }
+.ai-n { font-size:9px; font-family:Arial; opacity:.55; margin-bottom:2px; }
+.ai-l { font-size:11px; font-weight:bold; }
+.lf{border:1px solid #7A6530;} .lf .arch-head{background:#C9A84C18;color:var(--gold);} .lf .arch-item{border-color:#7A6530;background:#C9A84C0C;color:var(--gold);}
+.lp{border:1px solid #7A3000;} .lp .arch-head{background:#D3540018;color:#E0763A;} .lp .arch-item{border-color:#7A3000;background:#D354000C;color:#E87F40;}
+.lo{border:1px solid #1A4A70;} .lo .arch-head{background:#2471A318;color:#5BA3D4;} .lo .arch-item{border-color:#1A4A70;background:#2471A30C;color:#7ABBDE;}
+.le{border:1px solid #4A2070;} .le .arch-head{background:#7D3C9818;color:#B07FCC;} .le .arch-item{border-color:#4A2070;background:#7D3C980C;color:#C09FD8;}
+.arch-note { font-size:11px; color:var(--cream-dim); font-style:italic; line-height:20px; margin-top:12px; border-left:2px solid var(--gold-dim); padding-left:10px; }
+
+/* MINISTRY CARDS */
+.mcard { border:1px solid; border-radius:4px; overflow:hidden; margin-bottom:6px; }
+.mcard-head { display:flex; align-items:center; gap:10px; padding:10px 12px; cursor:pointer; }
+.mbadge { width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; color:white; font-size:9px; font-family:Arial; font-weight:bold; }
+.mname-col { flex:1; }
+.mcard-name { font-size:13px; font-weight:bold; margin-bottom:1px; }
+.mcard-sub { font-size:10px; font-family:Arial; opacity:.5; font-style:italic; }
+.marrow { font-size:16px; opacity:.35; flex-shrink:0; }
+.mdetail { display:none; padding:0 12px 14px; }
+.mdetail.open { display:block; }
+
+/* MINISTRY BRIEF (static reference — not editable) */
+.brief { padding-bottom:12px; margin-bottom:12px; border-bottom:1px dashed var(--gold-dim); }
+.brief-head { font-size:9px; font-family:Arial; letter-spacing:2px; text-transform:uppercase; margin-bottom:7px; opacity:.9; }
+.brief-mandate { font-size:12px; font-style:italic; color:var(--cream); line-height:19px; margin-bottom:8px; }
+.brief-note { font-size:10px; font-style:italic; color:var(--cream-dim); opacity:.85; margin-bottom:9px; line-height:15px; }
+.brief-table { width:100%; border-collapse:collapse; margin:6px 0 10px; }
+.brief-table td { font-size:11px; line-height:16px; padding:4px 6px 4px 0; vertical-align:top; border-bottom:1px solid var(--navy-light); color:var(--cream-dim); }
+.brief-table td:first-child { width:36%; font-family:Arial; font-weight:bold; color:var(--gold-dim); font-size:10px; }
+.brief-table tr:last-child td { border-bottom:none; }
+.brief-line { font-size:11px; line-height:18px; color:var(--cream-dim); margin:5px 0; }
+.brief-line b { display:inline-block; font-family:Arial; font-size:9px; font-weight:bold; letter-spacing:1px; text-transform:uppercase; color:var(--gold-dim); margin-right:6px; }
+.brief-foryou { margin-top:9px; padding:8px 10px; background:#C9A84C0C; border-left:2px solid var(--gold); border-radius:0 3px 3px 0; font-size:11px; font-style:italic; color:var(--cream); line-height:18px; }
+.brief-foryou b { font-style:normal; font-family:Arial; font-size:9px; font-weight:bold; letter-spacing:1px; text-transform:uppercase; color:var(--gold); margin-right:5px; }
+
+/* MY TABLEAU */
+.my-tableau { border-top:1px dashed var(--gold-dim); padding-top:12px; }
+.mt-head { font-size:9px; font-family:Arial; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:10px; }
+.mt-row { display:flex; gap:8px; align-items:flex-start; margin:7px 0; }
+.mt-key { font-family:Arial; font-size:10px; color:var(--cream-dim); width:72px; flex-shrink:0; padding-top:4px; }
+.mt-val { flex:1; }
+
+/* STARS */
+.stars { display:flex; gap:3px; }
+.star { font-size:18px; cursor:pointer; opacity:.2; color:var(--gold); line-height:1; transition:opacity .1s; user-select:none; }
+.star.lit { opacity:1; }
+
+/* ASSET STACK */
+.asec { margin:8px 0; border:1px solid; border-radius:4px; overflow:hidden; }
+.asec-head { padding:9px 12px; }
+.asec-title { font-size:13px; font-weight:bold; margin-bottom:1px; }
+.asec-sub { font-size:10px; font-family:Arial; opacity:.55; }
+.asec-body { padding:8px 12px; }
+.arow { display:flex; align-items:center; gap:8px; padding:5px 0; border-bottom:1px solid var(--navy-light); font-size:12px; }
+.arow:last-child { border-bottom:none; }
+.adot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.aname { flex:1; }
+.aval { font-family:Arial; font-size:11px; text-align:right; }
+.atrack { font-size:10px; font-family:Arial; color:var(--cream-dim); font-style:italic; margin-top:7px; padding-top:7px; border-top:1px solid var(--navy-light); }
+
+/* ALLIANCES */
+.atier { margin:8px 0; border:1px solid var(--navy-light); border-radius:4px; overflow:hidden; }
+.atier-head { background:var(--navy-light); padding:8px 12px; font-size:9px; font-family:Arial; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); }
+.atier-body { padding:10px 12px; }
+.al-row { padding:7px 0; border-bottom:1px solid var(--navy-light); }
+.al-row:last-child { border-bottom:none; }
+.al-type { font-family:Arial; font-size:10px; font-weight:bold; color:var(--gold); margin-bottom:3px; }
+.geonode { padding:8px 0; border-bottom:1px solid var(--navy-light); display:flex; gap:10px; align-items:flex-start; }
+.geonode:last-child { border-bottom:none; }
+.geoname { font-size:12px; font-weight:bold; color:var(--gold); font-family:Arial; width:90px; flex-shrink:0; }
+.geodesc { flex:1; }
+
+/* GOVERNANCE */
+.gov-intro { font-size:12px; color:var(--cream-dim); font-style:italic; line-height:20px; margin-bottom:12px; border-left:2px solid var(--gold-dim); padding-left:10px; }
+.wrow { display:flex; align-items:center; gap:8px; margin:6px 0; }
+.wlabel { font-size:11px; font-family:Arial; color:var(--cream-dim); flex:1; min-width:0; }
+.cad { margin:7px 0; border:1px solid var(--navy-light); border-radius:4px; overflow:hidden; }
+.cad-head { background:var(--navy-light); padding:7px 12px; font-size:9px; font-family:Arial; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); }
+.cad-body { padding:8px 12px; font-size:12px; color:var(--cream-dim); line-height:20px; background:var(--navy-mid); }
+
+/* ═══════════════════════════════
+   EDITABLE FIELD SYSTEM
+═══════════════════════════════ */
+[data-f] {
+  display:inline-block;
+  min-width:60px;
+  padding:3px 6px;
+  border-radius:3px;
+  border-bottom:1px dashed var(--gold-dim);
+  color:var(--gold);
+  font-size:12px;
+  font-family:'Georgia',serif;
+  outline:none;
+  line-height:22px;
+  transition:background .15s, border .15s;
+  cursor:default;
+  -webkit-user-select:none;
+  user-select:none;
+}
+[data-f].blk { display:block; width:100%; }
+[data-f].tall { min-height:44px; }
+[data-f]:empty::before {
+  content:attr(data-ph);
+  opacity:.3;
+  font-style:italic;
+  color:var(--cream-dim);
+  pointer-events:none;
+}
+
+body.editing [data-f] {
+  background:var(--navy-light);
+  border:1px solid var(--gold-dim);
+  cursor:text;
+  color:var(--cream);
+  -webkit-user-select:text;
+  user-select:text;
+}
+body.editing [data-f]:focus {
+  border-color:var(--gold);
+  background:#1E3C6A;
+  outline:none;
+}
+
+/* NET WORTH BANNER */
+.nw-banner { margin-top:14px; border:1px solid var(--gold); border-radius:4px; padding:14px 16px; background:#C9A84C08; text-align:center; }
+.nw-label { font-size:9px; font-family:Arial; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:6px; }
+.nw-value { font-size:26px; font-weight:bold; color:var(--gold); }
+.nw-date { font-size:10px; font-family:Arial; color:var(--cream-dim); margin-top:4px; }
+
+/* NOTE BOX */
+.note-box { border:1px solid var(--navy-light); border-radius:4px; padding:10px 12px; background:var(--navy-mid); margin-top:6px; }
+
+/* FAB */
+.fab { position:fixed; bottom:20px; right:16px; padding:12px 24px; background:var(--gold); color:var(--navy); border:none; border-radius:28px; font-size:12px; font-family:Arial; font-weight:bold; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; z-index:999; box-shadow:0 4px 20px rgba(0,0,0,.5); transition:all .2s; }
+body.editing .fab { background:#27AE60; color:white; }
+
+/* SAVED TOAST */
+.toast { position:fixed; bottom:70px; right:16px; background:#27AE60; color:white; padding:8px 16px; border-radius:20px; font-size:11px; font-family:Arial; font-weight:bold; opacity:0; transition:opacity .3s; pointer-events:none; z-index:998; }
+.toast.show { opacity:1; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="eyebrow">Open Citadel — Institutional Architecture</div>
+  <h1>The Open Citadel</h1>
+  <p>Tap a ministry for its Field Guide, then log your own data under My Tableau · Tap <strong style="color:var(--gold)">Edit</strong> to type</p>
+</div>
+
+<div class="edit-banner">✎ EDIT MODE ACTIVE — Tap any gold field to type · Tap SAVE when done</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showPanel('arch',this)">Architecture</button>
+  <button class="tab" onclick="showPanel('min',this)">Ministries</button>
+  <button class="tab" onclick="showPanel('assets',this)">Assets</button>
+  <button class="tab" onclick="showPanel('alliances',this)">Alliances</button>
+  <button class="tab" onclick="showPanel('gov',this)">Governance</button>
+</div>
+
+<!-- ════ PANEL 1: ARCHITECTURE (static) ════ -->
+<div class="panel active" id="panel-arch">
+  <div class="stitle">The Four-Layer Architecture</div>
+  <div class="arch-layer lf">
+    <div class="arch-head">① Foundation — The Bedrock</div>
+    <div class="arch-body">
+      <div class="arch-item"><div class="ai-n">Ministry I</div><div class="ai-l">Imperial Charter</div></div>
+      <div class="arch-item"><div class="ai-n">Ministry X</div><div class="ai-l">Legacy &amp; Dynasty</div></div>
+    </div>
+  </div>
+  <div class="arch-layer lp">
+    <div class="arch-head">② Protection — The Moat</div>
+    <div class="arch-body">
+      <div class="arch-item"><div class="ai-n">Ministry IV</div><div class="ai-l">Capital Architecture</div></div>
+      <div class="arch-item"><div class="ai-n">Ministry VIII</div><div class="ai-l">Defense Architecture</div></div>
+    </div>
+  </div>
+  <div class="arch-layer lo">
+    <div class="arch-head">③ Operations — The Engine</div>
+    <div class="arch-body">
+      <div class="arch-item"><div class="ai-n">Ministry II</div><div class="ai-l">Territorial Holdings</div></div>
+      <div class="arch-item"><div class="ai-n">Ministry III</div><div class="ai-l">Enterprise Portfolio</div></div>
+      <div class="arch-item"><div class="ai-n">Ministry VI</div><div class="ai-l">Human Capital</div></div>
+      <div class="arch-item"><div class="ai-n">Ministry IX</div><div class="ai-l">Technology &amp; IP</div></div>
+    </div>
+  </div>
+  <div class="arch-layer le">
+    <div class="arch-head">④ Expansion — The Reach</div>
+    <div class="arch-body">
+      <div class="arch-item"><div class="ai-n">Ministry V</div><div class="ai-l">Intelligence Corps</div></div>
+      <div class="arch-item"><div class="ai-n">Ministry VII</div><div class="ai-l">International Alliances</div></div>
+    </div>
+  </div>
+  <div class="arch-note">Build in sequence: Foundation first, then Protection, then Operations, then Expansion. Each layer depends on the one below it. Open the Ministries tab for the full field guide on each.</div>
+</div>
+
+<!-- ════ PANEL 2: MINISTRIES ════ -->
+<div class="panel" id="panel-min">
+  <div class="stitle">10 Ministries — Field Guide + Your Tableau</div>
+  <div id="ministry-list"></div>
+</div>
+
+<!-- ════ PANEL 3: ASSETS ════ -->
+<div class="panel" id="panel-assets">
+  <div class="stitle">Empire Asset Stack — Your Real Numbers</div>
+
+  <div class="asec" style="border-color:#2471A360">
+    <div class="asec-head" style="background:#2471A312"><div class="asec-title" style="color:#5BA3D4">Enterprise Value</div><div class="asec-sub">Ministry III — Operating Companies</div></div>
+    <div class="asec-body">
+      <div class="arow"><div class="adot" style="background:#5BA3D4"></div><div class="aname"><span data-f="ae1n" data-ph="Entity 1 — name / description"></span></div><div class="aval"><span data-f="ae1v" data-ph="₹ —"></span></div></div>
+      <div class="arow"><div class="adot" style="background:#2471A3"></div><div class="aname"><span data-f="ae2n" data-ph="Entity 2 — name / description"></span></div><div class="aval"><span data-f="ae2v" data-ph="₹ —"></span></div></div>
+      <div class="arow"><div class="adot" style="background:#1A3A5C"></div><div class="aname"><span data-f="ae3n" data-ph="Entity 3 — Pipeline / seed bet"></span></div><div class="aval"><span data-f="ae3v" data-ph="₹ —"></span></div></div>
+      <div class="atrack">Enterprise Total: <span data-f="aetot" data-ph="₹ —"></span> · Notes: <span data-f="aenotes" data-ph="—"></span></div>
+    </div>
+  </div>
+
+  <div class="asec" style="border-color:#8B5E3C60">
+    <div class="asec-head" style="background:#8B5E3C12"><div class="asec-title" style="color:#C47D50">Territorial Value</div><div class="asec-sub">Ministry II — Real Estate &amp; Physical Assets</div></div>
+    <div class="asec-body">
+      <div class="arow"><div class="adot" style="background:#C47D50"></div><div class="aname"><span data-f="ap1n" data-ph="Property 1 — name / location"></span></div><div class="aval"><span data-f="ap1v" data-ph="₹ —"></span></div></div>
+      <div class="arow"><div class="adot" style="background:#9B5E3A"></div><div class="aname"><span data-f="ap2n" data-ph="Property 2 — name / location"></span></div><div class="aval"><span data-f="ap2v" data-ph="₹ —"></span></div></div>
+      <div class="arow"><div class="adot" style="background:#6A3A18"></div><div class="aname"><span data-f="ap3n" data-ph="Property 3 / Next target"></span></div><div class="aval"><span data-f="ap3v" data-ph="₹ —"></span></div></div>
+      <div class="atrack">Portfolio Total: <span data-f="aptot" data-ph="₹ —"></span> · Avg Yield: <span data-f="apyield" data-ph="— %"></span> · LTV: <span data-f="apltv" data-ph="— %"></span></div>
+    </div>
+  </div>
+
+  <div class="asec" style="border-color:#D3540060">
+    <div class="asec-head" style="background:#D3540012"><div class="asec-title" style="color:#E87F40">Capital Portfolio</div><div class="asec-sub">Ministry IV — Financial Architecture</div></div>
+    <div class="asec-body">
+      <div class="arow"><div class="adot" style="background:#E87F40"></div><div class="aname">Public Equities (India + Intl)</div><div class="aval"><span data-f="ac-eq" data-ph="₹ —"></span></div></div>
+      <div class="arow"><div class="adot" style="background:#C06030"></div><div class="aname">Private Equity / Angels</div><div class="aval"><span data-f="ac-pe" data-ph="₹ —"></span></div></div>
+      <div class="arow"><div class="adot" style="background:#A04020"></div><div class="aname">Debt / FDs / Bonds</div><div class="aval"><span data-f="ac-dbt" data-ph="₹ —"></span></div></div>
+      <div class="arow"><div class="adot" style="background:#803010"></div><div class="aname">Gold / Alternatives</div><div class="aval"><span data-f="ac-alt" data-ph="₹ —"></span></div></div>
+      <div class="arow"><div class="adot" style="background:#602000"></div><div class="aname">International / Foreign Assets</div><div class="aval"><span data-f="ac-intl" data-ph="₹ —"></span></div></div>
+      <div class="atrack">Portfolio Total: <span data-f="actot" data-ph="₹ —"></span> · Allocation notes: <span data-f="acnotes" data-ph="—"></span></div>
+    </div>
+  </div>
+
+  <div class="asec" style="border-color:#117A8B60">
+    <div class="asec-head" style="background:#117A8B12"><div class="asec-title" style="color:#46C2CC">Intellectual &amp; Digital Assets</div><div class="asec-sub">Ministry IX — Technology &amp; IP</div></div>
+    <div class="asec-body">
+      <div class="arow"><div class="adot" style="background:#46C2CC"></div><div class="aname"><span data-f="aip1n" data-ph="IP asset 1 — name / type"></span></div><div class="aval"><span data-f="aip1v" data-ph="₹ —"></span></div></div>
+      <div class="arow"><div class="adot" style="background:#2E9BAA"></div><div class="aname"><span data-f="aip2n" data-ph="Digital asset — platform / domain"></span></div><div class="aval"><span data-f="aip2v" data-ph="₹ —"></span></div></div>
+      <div class="atrack">IP notes: <span data-f="aipnotes" data-ph="What is owned, protected, in pipeline..."></span></div>
+    </div>
+  </div>
+
+  <div class="asec" style="border-color:#C0392B60">
+    <div class="asec-head" style="background:#C0392B12"><div class="asec-title" style="color:#E84040">Liquidity &amp; Defense Reserve</div><div class="asec-sub">Ministry VIII — Defense</div></div>
+    <div class="asec-body">
+      <div class="arow"><div class="adot" style="background:#E84040"></div><div class="aname">Emergency fund (personal)</div><div class="aval"><span data-f="al-emg" data-ph="₹ —"></span></div></div>
+      <div class="arow"><div class="adot" style="background:#B03030"></div><div class="aname">Operating capital (entities)</div><div class="aval"><span data-f="al-ops" data-ph="₹ —"></span></div></div>
+      <div class="arow"><div class="adot" style="background:#802020"></div><div class="aname">Opportunity / deployable capital</div><div class="aval"><span data-f="al-opp" data-ph="₹ —"></span></div></div>
+    </div>
+  </div>
+
+  <div class="nw-banner">
+    <div class="nw-label">Total Empire Net Worth</div>
+    <div class="nw-value"><span data-f="nw-total" data-ph="₹ —"></span></div>
+    <div class="nw-date">Last updated: <span data-f="nw-date" data-ph="not set"></span></div>
+  </div>
+</div>
+
+<!-- ════ PANEL 4: ALLIANCES ════ -->
+<div class="panel" id="panel-alliances">
+  <div class="stitle">Alliance Architecture — Your Contacts &amp; Network</div>
+
+  <div class="atier">
+    <div class="atier-head">Tier I — Core Strategic Partners</div>
+    <div class="atier-body">
+      <div class="al-row"><div class="al-type">Business JVs &amp; Co-founders</div><span data-f="al-jv" class="blk" data-ph="Name · Role · Entity · Status..."></span></div>
+      <div class="al-row"><div class="al-type">Advisory Board</div><span data-f="al-adv" class="blk" data-ph="Name · Domain · How they help..."></span></div>
+      <div class="al-row"><div class="al-type">Capital Partners</div><span data-f="al-cap" class="blk" data-ph="Banks, investors, family offices..."></span></div>
+      <div class="al-row"><div class="al-type">Legal &amp; Compliance</div><span data-f="al-legal" class="blk" data-ph="Lawyers, CAs, compliance advisors..."></span></div>
+      <div class="al-row"><div class="al-type">Institutional</div><span data-f="al-inst" class="blk" data-ph="Industry bodies, government, regulators..."></span></div>
+    </div>
+  </div>
+
+  <div class="atier">
+    <div class="atier-head">Tier II — Geographic Nodes</div>
+    <div class="atier-body">
+      <div class="geonode"><div class="geoname">🇮🇳 India</div><div class="geodesc"><span data-f="geo-in" class="blk" data-ph="Key contacts · Opportunities · Status..."></span></div></div>
+      <div class="geonode"><div class="geoname">🇸🇬 Singapore</div><div class="geodesc"><span data-f="geo-sg" class="blk" data-ph="Key contacts · Opportunities · Status..."></span></div></div>
+      <div class="geonode"><div class="geoname">🇦🇪 UAE / Gulf</div><div class="geodesc"><span data-f="geo-uae" class="blk" data-ph="Key contacts · Opportunities · Status..."></span></div></div>
+      <div class="geonode"><div class="geoname">🌏 SE Asia</div><div class="geodesc"><span data-f="geo-sea" class="blk" data-ph="Key contacts · Opportunities · Status..."></span></div></div>
+      <div class="geonode"><div class="geoname">🇬🇧 UK / Europe</div><div class="geodesc"><span data-f="geo-uk" class="blk" data-ph="Key contacts · Opportunities · Status..."></span></div></div>
+      <div class="geonode"><div class="geoname">🇺🇸 USA</div><div class="geodesc"><span data-f="geo-us" class="blk" data-ph="Key contacts · Opportunities · Status..."></span></div></div>
+      <div class="geonode"><div class="geoname">📍 Other</div><div class="geodesc"><span data-f="geo-other" class="blk" data-ph="Other markets of interest..."></span></div></div>
+    </div>
+  </div>
+
+  <div class="atier">
+    <div class="atier-head">Pipeline — Active &amp; Planned</div>
+    <div class="atier-body">
+      <div class="al-row"><div class="al-type">In Progress</div><span data-f="al-inprog" class="blk" data-ph="Active negotiations, discussions, deals..."></span></div>
+      <div class="al-row"><div class="al-type">To Initiate</div><span data-f="al-toinit" class="blk" data-ph="Relationships to build, contacts to reach..."></span></div>
+      <div class="al-row"><div class="al-type">Dormant / Review</div><span data-f="al-dormant" class="blk" data-ph="Alliances to revisit or close..."></span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PANEL 5: GOVERNANCE ════ -->
+<div class="panel" id="panel-gov">
+  <div class="stitle">Imperial Governance — Your Command Record</div>
+
+  <div class="sub-stitle">Weekly Council · Ministry Health Ratings</div>
+  <div style="font-size:10px; font-family:Arial; color:var(--cream-dim); margin-bottom:10px;">Week of: <span data-f="gov-week" data-ph="dd / mm / yyyy"></span></div>
+  <div id="weekly-grid"></div>
+
+  <div class="sub-stitle">Weekly Campaign Objective</div>
+  <div class="note-box"><span data-f="gov-obj" class="blk tall" data-ph="What is the empire's priority mission this week?"></span></div>
+
+  <div class="sub-stitle">Weakest Ministry This Week</div>
+  <div style="border:1px solid #C0392B50; border-radius:4px; padding:10px 12px; background:#C0392B06;">
+    <span data-f="gov-weak" class="blk" data-ph="Which ministry is most at risk — and what is the one action to take?"></span>
+  </div>
+
+  <div class="sub-stitle">Monthly Imperial Review Notes</div>
+  <div class="note-box"><span data-f="gov-monthly" class="blk tall" data-ph="What moved? What stalled? Key decisions made? State of the empire this month..."></span></div>
+
+  <div class="sub-stitle">Current 90-Day Campaign</div>
+  <div class="note-box"><span data-f="gov-campaign" class="blk" data-ph="The one capability or ministry being intensively developed this quarter..."></span></div>
+
+  <div class="sub-stitle">Review Cadence</div>
+  <div class="cad"><div class="cad-head">Daily — 5 Min Morning</div><div class="cad-body">Which ministry needs a directive today? One MIT action toward the campaign objective.</div></div>
+  <div class="cad"><div class="cad-head">Weekly — Council Session (Sunday · 20 min)</div><div class="cad-body">Rate all 10 ministries. Identify weakest. Set campaign. Protect the week's peak time.</div></div>
+  <div class="cad"><div class="cad-head">Monthly — Imperial Review (Last Sunday · 60 min)</div><div class="cad-body">Full tableau across all ministries. Update asset stack. Review alliance pipeline.</div></div>
+  <div class="cad"><div class="cad-head">Quarterly — Constitutional Review</div><div class="cad-body">Return to Ministry I. Is the 50-year mission still accurate? Update the empire map.</div></div>
+  <div class="cad"><div class="cad-head">Annual — Imperial Assembly (Half day)</div><div class="cad-body">Full year review. P&L per entity. Net worth change. Write the Annual Imperial Report.</div></div>
+</div>
+
+<!-- FLOATING BUTTON -->
+<button class="fab" id="fab" onclick="toggleEdit()">✎ Edit</button>
+<div class="toast" id="toast">Saved ✓</div>
+
+<script>
+const MINS = [
+  {id:1,  num:'I',    col:'#C9A84C', name:'Imperial Charter',        sub:'50-year vision · Operating code · Mission'},
+  {id:2,  num:'II',   col:'#C47D50', name:'Territorial Holdings',    sub:'Real estate · Land · Physical assets'},
+  {id:3,  num:'III',  col:'#5BA3D4', name:'Enterprise Portfolio',    sub:'Companies · Ventures · Revenue streams'},
+  {id:4,  num:'IV',   col:'#E87F40', name:'Capital Architecture',    sub:'Holdings · Investments · Leverage · Tax'},
+  {id:5,  num:'V',    col:'#B07FCC', name:'Intelligence Corps',      sub:'Market research · Deal flow · Trends'},
+  {id:6,  num:'VI',   col:'#4DBFB0', name:'Human Capital',           sub:'Team · Advisors · Board · Succession'},
+  {id:7,  num:'VII',  col:'#6BAED6', name:'International Alliances', sub:'Cross-border · JVs · Diplomatic network'},
+  {id:8,  num:'VIII', col:'#E84040', name:'Defense Architecture',    sub:'Legal · IP · Insurance · Compliance'},
+  {id:9,  num:'IX',   col:'#46C2CC', name:'Technology & IP',         sub:'IP portfolio · Digital assets · Innovation'},
+  {id:10, num:'X',    col:'#A07FCC', name:'Legacy & Dynasty',        sub:'Estate · Brand · Philanthropy · 100yr vision'}
+];
+
+// ─── MINISTRY FIELD GUIDES (static reference content) ────────────
+const BRIEF = {
+  1: {
+    mandate: `The mission, principles, and 50-year horizon every other ministry answers to.`,
+    subs: [
+      [`Mission statement`, `One sentence: what's being built, for whom, why`],
+      [`Operating principles`, `5–7 non-negotiables that govern every decision`],
+      [`Risk philosophy`, `How much capital/time you'll risk on Growth vs. Stability`],
+      [`50-year horizon`, `The world you're building toward — not a task list`],
+      [`Worldview`, `Ikigai, personal philosophy, what "success" means beyond money`]
+    ],
+    build: `write the mission → write the principles → define risk tolerance → write the 50-year vision → revisit quarterly.`,
+    track: `can you state the mission in one sentence, unprompted, in under 10 seconds?`,
+    echo: `Napoleon's Civil Code — written once, in 1804 — still underpins French law today. A Charter is meant to have that kind of half-life; everything else answers to it.`,
+    forYou: null, note: null
+  },
+  2: {
+    mandate: `The land and property the empire stands on and profits from.`,
+    subs: [
+      [`Residential`, `Primary home + rental units`],
+      [`Commercial/industrial`, `Office, retail, warehouse bought for yield or use`],
+      [`Land & development`, `Raw or agricultural land held for appreciation`],
+      [`REITs`, `Liquid real-estate exposure without direct management`],
+      [`Geographic spread`, `Reducing concentration risk across cities`]
+    ],
+    build: `own your primary residence before renting further → first rental property, small and local → a second micro-market → commercial once residential is second nature.`,
+    track: `portfolio value, yield % per asset, loan-to-value ratio.`,
+    echo: `One of the oldest, most literal forms of empire-building — real estate rarely goes to zero, which makes it the empire's ballast.`,
+    forYou: null, note: null
+  },
+  3: {
+    mandate: `The operating businesses — plural — that generate active income and equity value.`,
+    subs: [
+      [`Cash cow`, `The stable, current income source`],
+      [`Growth entity`, `The venture with a 2–5 year horizon`],
+      [`Seed bets`, `Small, low-capital experiments to learn fast`],
+      [`Acquisition pipeline`, `Businesses/stakes under evaluation`],
+      [`Portfolio rhythm`, `Quarterly promote / hold / divest decision per entity`]
+    ],
+    build: `protect a daily window for the Growth entity → validate the problem in real conversations → get to a first beta user → only then consider a Seed bet elsewhere.`,
+    track: `revenue per entity, stage, capital needs, exit horizon.`,
+    echo: `No empire in history ran on one business alone — Standard Oil expanded into shipping and pipelines the moment oil alone stopped being enough.`,
+    forYou: `Your Growth entity is the B-plan, currently at the customer-discovery / beta-user-outreach stage — concrete, not abstract.`,
+    note: `"Career Defense" from the earlier draft isn't a separate ministry anymore — it lives here, as the Cash Cow slot.`
+  },
+  4: {
+    mandate: `How capital is structured, allocated, protected, and grown — the empire's financial nervous system.`,
+    subs: [
+      [`Holding structure`, `A Pvt Ltd/LLP that owns equity in every operating entity`],
+      [`Investment portfolio`, `Equities, debt, alternatives, spread by class and geography`],
+      [`Leverage`, `Productive debt (funding appreciating assets) vs. destructive debt`],
+      [`Tax architecture`, `Structuring entities/transactions to legally reduce leakage`],
+      [`Capital allocation`, `Monthly decision — which ministry gets the next rupee`]
+    ],
+    build: `formalize what you already run into an entity structure → separate personal and business capital → layer in tax/cross-border structuring as entities multiply.`,
+    track: `net worth by asset class, allocation vs. target, where the monthly surplus went.`,
+    echo: `Napoleon founded the Bank of France in 1800 for the same reason — to stop treasury chaos from destroying everything built on top of it.`,
+    forYou: `You already run a structured, bucketed portfolio with disciplined SIPs — most of personal finance is handled. What this ministry adds is the entity layer on top: a holding company that owns stakes in your ventures and properties, so personal and business risk stop sitting in the same basket.`,
+    note: null
+  },
+  5: {
+    mandate: `Information advantage — seeing opportunity and threat before it's obvious.`,
+    subs: [
+      [`Sector monitoring`, `Tracking your specific industries for shifts`],
+      [`Competitive intelligence`, `What comparable players are doing`],
+      [`Deal flow`, `Running list of investment/JV opportunities`],
+      [`Macro & regulatory watch`, `Policy and economic shifts affecting capital`],
+      [`Market scouting`, `New geographies or categories worth early entry`]
+    ],
+    build: `pick 2–3 trusted sources in your core industry and scan weekly → start a simple deal-flow log → build one relationship with someone who has visibility you don't.`,
+    track: `signals logged, one strategy shift made because of something spotted early.`,
+    echo: `Napoleon read his own dispatches before his generals did — a real edge built from fresher information, not more soldiers.`,
+    forYou: null, note: null
+  },
+  6: {
+    mandate: `Every person who works with or for the empire — team, advisors, board, successors.`,
+    subs: [
+      [`Core team`, `Employees or contractors per entity`],
+      [`Advisory board`, `Sector experts, no operational control`],
+      [`Professional services`, `CA/CFO, legal counsel, recruiters`],
+      [`Succession`, `Who could step into a key role if you couldn't`],
+      [`Talent pipeline`, `How new people are found and onboarded as you scale`]
+    ],
+    build: `identify your first real gap (usually legal or CA) → document your own key processes → hire your first operational role once revenue is consistent.`,
+    track: `key-person risk per critical role, gaps limiting growth.`,
+    echo: `An empire's ceiling is the capability of the people running it, not the founder's ambition. Napoleon's Lycée system deliberately engineered the talent pipeline that produced his ministers.`,
+    forYou: null, note: null
+  },
+  7: {
+    mandate: `Cross-border relationships and geographic nodes that define how large the empire can grow.`,
+    subs: [
+      [`Business JVs`, `Equity or revenue-sharing partnerships abroad`],
+      [`Geographic nodes`, `Deliberate presence in key hubs (Singapore, UAE, etc.)`],
+      [`Licensing & distribution`, `Others take your product/brand to markets you can't reach`],
+      [`Institutional relationships`, `Trade bodies, foreign chambers, regulators`],
+      [`Co-investment networks`, `Pooled capital for deals too large to do alone`]
+    ],
+    build: `get Ministries II–IX functioning at home first → one informal international relationship → pick the ONE node your industry naturally reaches first, not all six.`,
+    track: `active relationships by geography, which node is being neglected.`,
+    echo: `Geography is one of the last true ceilings once a domestic market saturates.`,
+    forYou: null, note: null
+  },
+  8: {
+    mandate: `Everything that protects the empire from being destroyed — legal exposure, IP theft, uninsured risk, regulatory failure.`,
+    subs: [
+      [`Legal entity structure`, `Right entity type per venture + holding relationship`],
+      [`IP protection`, `Trademarks, patents, NDAs, non-competes, trade secrets`],
+      [`Insurance`, `Life, health, key-man, property, liability, D&O`],
+      [`Compliance calendar`, `Filings and renewals across every entity/jurisdiction`],
+      [`Risk register`, `Living list of top threats and mitigation status`]
+    ],
+    build: `personal insurance first → written agreements past a certain deal size → formal entity registration before an idea becomes real cash flow → an IP log, even informal.`,
+    track: `biggest unprotected risk this month, insurance current (Y/N), compliance items due in 30 days.`,
+    echo: `The least glamorous ministry, and the one first-time builders skip — which is exactly why installing it early pays off disproportionately.`,
+    forYou: null, note: null
+  },
+  9: {
+    mandate: `Technology and intellectual property that create moats and scale value independent of your direct labor.`,
+    subs: [
+      [`IP portfolio`, `Patents, trademarks, trade secrets, proprietary process`],
+      [`Digital assets`, `Owned platforms, software, content, data`],
+      [`Automation`, `Systems that cut manual work per unit of output`],
+      [`Innovation pipeline`, `What capability or product comes next`],
+      [`Tech partnerships`, `Licensing or joint development with outside providers`]
+    ],
+    build: `write down any process you already use informally → build one small digital asset → register IP once something has real commercial value.`,
+    track: `IP created/protected this month, manual tasks automated.`,
+    echo: `What separates "a job with extra steps" from a scalable enterprise — a method documented once can generate value long after the hour spent building it.`,
+    forYou: null, note: null
+  },
+  10: {
+    mandate: `What survives the founder — wealth transfer, institutional memory, whether the empire needs you to keep running.`,
+    subs: [
+      [`Estate planning`, `Will, trusts, nominations, beneficiary designations`],
+      [`Wealth transfer`, `How assets move to the next generation with minimal friction`],
+      [`Family governance`, `Rules for how family relates to the business, if multi-generational`],
+      [`Institutional memory`, `Documentation so knowledge doesn't die with you`],
+      [`Public brand & philanthropy`, `What the empire is known for, beyond wealth`]
+    ],
+    build: `a basic will first (most people skip this entirely) → correct beneficiary nominations everywhere → document key decisions as you go → trust structures once entities multiply.`,
+    track: `is a will in place? One memory-doc written per quarter.`,
+    echo: `Tata Sons is a real example of this designed in from the start — most of its equity sits with philanthropic trusts, not individuals.`,
+    forYou: `With a young child, this ministry stops being theoretical — wealth transfer and family governance are eventually about them, specifically.`,
+    note: null
+  }
+};
+
+// ─── BUILD MINISTRIES ───────────────────────────────────────────
+function buildMin() {
+  document.getElementById('ministry-list').innerHTML = MINS.map(m => {
+    const b = BRIEF[m.id];
+    const subsHtml = b.subs.map(s=>`<tr><td>${s[0]}</td><td>${s[1]}</td></tr>`).join('');
+    const noteHtml = b.note ? `<div class="brief-note">Note: ${b.note}</div>` : '';
+    const foryouHtml = b.forYou ? `<div class="brief-foryou"><b>For you</b>${b.forYou}</div>` : '';
+    return `
+    <div class="mcard" style="border-color:${m.col}40">
+      <div class="mcard-head" onclick="togMin(${m.id})">
+        <div class="mbadge" style="background:${m.col}">${m.num}</div>
+        <div class="mname-col">
+          <div class="mcard-name" style="color:${m.col}">${m.name}</div>
+          <div class="mcard-sub">${m.sub}</div>
+        </div>
+        <div class="marrow" id="arr${m.id}">›</div>
+      </div>
+      <div class="mdetail" id="det${m.id}">
+        <div class="brief">
+          <div class="brief-head" style="color:${m.col}">Ministry Field Guide</div>
+          <div class="brief-mandate">${b.mandate}</div>
+          ${noteHtml}
+          <table class="brief-table">${subsHtml}</table>
+          <div class="brief-line"><b>Build</b>${b.build}</div>
+          <div class="brief-line"><b>Track</b>${b.track}</div>
+          <div class="brief-line"><b>Echo</b>${b.echo}</div>
+          ${foryouHtml}
+        </div>
+        <div class="my-tableau">
+          <div class="mt-head">My Imperial Tableau</div>
+          <div class="mt-row">
+            <div class="mt-key">Health</div>
+            <div class="mt-val">
+              <div class="stars" id="str${m.id}">
+                ${[1,2,3,4,5].map(s=>`<span class="star" onclick="setStar(${m.id},${s},event)">★</span>`).join('')}
+              </div>
+            </div>
+          </div>
+          <div class="mt-row">
+            <div class="mt-key">Status</div>
+            <div class="mt-val"><span data-f="m${m.id}st" class="blk" data-ph="Current status of this ministry..."></span></div>
+          </div>
+          <div class="mt-row">
+            <div class="mt-key">Next Action</div>
+            <div class="mt-val"><span data-f="m${m.id}ac" class="blk" data-ph="Next concrete step..."></span></div>
+          </div>
+          <div class="mt-row">
+            <div class="mt-key">Notes</div>
+            <div class="mt-val"><span data-f="m${m.id}nt" class="blk tall" data-ph="Key people, decisions, context, blockers..."></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  }).join('');
+}
+
+// ─── BUILD WEEKLY GRID ──────────────────────────────────────────
+function buildWeekly() {
+  document.getElementById('weekly-grid').innerHTML = MINS.map(m => `
+    <div class="wrow">
+      <div class="wlabel" style="color:${m.col}">${m.num}. ${m.name}</div>
+      <div class="stars" id="wstr${m.id}" style="flex-shrink:0;">
+        ${[1,2,3,4,5].map(s=>`<span class="star" style="font-size:14px;" onclick="setWStar(${m.id},${s},event)">★</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── TOGGLE MINISTRY ────────────────────────────────────────────
+function togMin(id) {
+  const d = document.getElementById('det'+id);
+  const a = document.getElementById('arr'+id);
+  const open = d.classList.contains('open');
+  document.querySelectorAll('.mdetail').forEach(x=>x.classList.remove('open'));
+  document.querySelectorAll('.marrow').forEach(x=>x.textContent='›');
+  if(!open){d.classList.add('open');a.textContent='⌄';}
+}
+
+// ─── STAR RATINGS ───────────────────────────────────────────────
+const rats={}, wrats={};
+
+async function setStar(id,val,e){
+  e.stopPropagation();
+  rats[id]=val; litStars('str'+id,val);
+  try{await window.storage.set('emp:rat'+id, String(val));}catch(er){}
+}
+async function setWStar(id,val,e){
+  e.stopPropagation();
+  wrats[id]=val; litStars('wstr'+id,val);
+  try{await window.storage.set('emp:wrat'+id, String(val));}catch(er){}
+}
+function litStars(cid,val){
+  document.querySelectorAll('#'+cid+' .star').forEach((s,i)=>s.classList.toggle('lit',i<val));
+}
+
+// ─── EDIT / SAVE ────────────────────────────────────────────────
+let editing=false;
+
+function toggleEdit(){
+  editing=!editing;
+  document.body.classList.toggle('editing',editing);
+  const fab=document.getElementById('fab');
+  document.querySelectorAll('[data-f]').forEach(el=>{
+    el.contentEditable = editing?'true':'false';
+  });
+  if(editing){
+    fab.textContent='✓ Save';
+  } else {
+    fab.textContent='✎ Edit';
+    saveAll();
+  }
+}
+
+// ─── STORAGE ────────────────────────────────────────────────────
+async function saveAll(){
+  const fields=document.querySelectorAll('[data-f]');
+  for(const f of fields){
+    const key=f.getAttribute('data-f');
+    const val=f.textContent.trim();
+    try{await window.storage.set('emp:'+key, val);}catch(e){}
+  }
+  showToast();
+}
+
+async function loadAll(){
+  // text fields
+  const fields=document.querySelectorAll('[data-f]');
+  for(const f of fields){
+    const key=f.getAttribute('data-f');
+    try{
+      const r=await window.storage.get('emp:'+key);
+      if(r && r.value) f.textContent=r.value;
+    }catch(e){}
+  }
+  // ministry ratings
+  for(const m of MINS){
+    try{
+      const r=await window.storage.get('emp:rat'+m.id);
+      if(r&&r.value){rats[m.id]=parseInt(r.value);litStars('str'+m.id,rats[m.id]);}
+    }catch(e){}
+    try{
+      const r=await window.storage.get('emp:wrat'+m.id);
+      if(r&&r.value){wrats[m.id]=parseInt(r.value);litStars('wstr'+m.id,wrats[m.id]);}
+    }catch(e){}
+  }
+}
+
+function showToast(){
+  const t=document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+// ─── PANEL SWITCH ───────────────────────────────────────────────
+function showPanel(n,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+n).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ─── INIT ───────────────────────────────────────────────────────
+buildMin();
+buildWeekly();
+loadAll();
+</script>
+</body>
+</html>
